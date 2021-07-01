@@ -1,68 +1,73 @@
 
 #include <bits/stdc++.h>
 using namespace std;
+
+
 #define ll long long int
 
-vector<int> g[1001];
-vector<pair<ll, vector<ll>>> pt;
+vector<int> graph[1001];
+vector<pair<ll, vector<ll>>> PATH;
 
-void dfs(ll st, ll e, ll vis[], vector<ll> rs, ll w)
+void DFS(ll start, ll end, ll visited[], vector<ll> res, ll secs)
 {
-    rs.push_back(st);
-    if (st == e)
+    res.push_back(start);
+    if (start == end)
     {
-        pt.push_back({w * (rs.size() - 1), rs});
+        PATH.push_back({secs * (res.size() - 1), res});
         return;
     }
-    for (auto u : g[st])
+    for (auto v : graph[start])
     {
-        if (vis[u] == 0)
+        if (visited[v] == 0)
         {
-            vis[st] = 1;
-            dfs(u, e, vis, rs, w);
-            vis[st] = 0;
+            visited[start] = 1;
+            DFS(v, end, visited, res, secs);
+            visited[start] = 0;
         }
     }
 }
 
 int main()
 {
-    ll n, m, t, c, u, v;
-    cin >> n >> m >> t >> c;
-    while (m--)
+    ll N, M, T, C, u, v;
+    cin >> N >> M >> T >> C;
+
+    for(int i = 0; i<M; i++)
     {
         cin >> u >> v;
-        g[u].push_back(v);
-        g[v].push_back(u);
+        graph[u].push_back(v);
+        graph[v].push_back(u);
     }
 
-    if (n == 1)
+    if (N == 1)
         cout << 0 << endl;
 
-    else if (n == 2)
-        cout << t << endl;
+    else if (N == 2)
+        cout << T << endl;
 
     else
     {
-        vector<ll> rs;
-        ll w = c;
-        ll vis[n + 1] = {0};
-        dfs(1, n, vis, rs, w);
-        if (pt.size() == 0)
+        vector<ll> res;
+        ll secs = C;
+        ll visited[N + 1] = {0};
+
+        // Performing DFS
+        DFS(1, N, visited, res, secs);
+        if (PATH.size() == 0)
             cout << -1 << endl;
         else
         {
-            sort(pt.begin(), pt.end());
-            ll te = 0;
-            ll nt = 0;
-            for (int i = 1; i < pt[0].second.size(); i++)
+            sort(PATH.begin(), PATH.end());
+            ll ans = 0;
+            ll totalTime = 0;
+            for (int i = 1; i < PATH[0].second.size(); i++)
             {
-                te += c + (nt - te);
-                while (nt < te)
-                    nt += t;
+                ans += C + (totalTime - ans);
+                while (totalTime < ans)
+                    totalTime += T;
             }
-            cout << te << endl;
-        } //else
+            cout << ans << endl;
+        }
     }
     return 0;
 }

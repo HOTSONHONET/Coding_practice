@@ -1,0 +1,41 @@
+body{
+    overflow: hidden;
+    margin: 0;
+}
+.bg{
+    background-image : linear-gradient(to right, rgba(76, 76, 158, 0), rgb(68, 152, 201));
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    padding-top: 10%;
+    padding-bottom: 1%;
+    margin: 0;
+
+}
+
+.head{
+    color: rgb(66, 62, 62);    
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-align: center;
+    margin-top: 0px;
+    padding-bottom: 10px;
+}
+
+.fbg{
+    background-color: rgb(56, 55, 55);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center; 
+    margin: 0;
+
+}
+
+.card{
+    margin: auto;
+    margin-bottom: 10px;
+}
+.card-img-top{
+    width: 100%;
+    height: 30vh;
+    /* object-fit: contain; */
+}

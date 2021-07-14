@@ -15,46 +15,23 @@ const btnIds = [
     "hard_plus",
 ]
 
-// function createVariables(){
-//     var tmpEvents = {};
-//     for(let id of btnIds){
-//         let level, operation = id.split("_");
-//         let tmpId = level + "_cnt";
-//         if(operation == "minus"){           
-//             tmpEvents[id] = document.getElementById(id).addEventListener("click",
-//                 function minusBtn() {
-//                     let element = document.getElementById(tmpId);
-//                     if (parseInt(element.textContent) > 0){
-//                         let tmpCnt = parseInt(element.textContent) - 1;
-//                         element.textContent = tmpCnt.toString();
-//                     }
-//                 }
-        
-//             );       
+function print(){
+    for (let i = 0; i < btnIds.length; i++) {               
+        let element = document.getElementById(btnIds[i]);         
+        if(element.id.toString().split("_")[1] == "cnt") 
+            console.log(`${btnIds[i]}-----------${element.textContent}`);
+    }
+}
 
-//         }
-//         else if(operation == "plus")
-//         {
-//             tmpEvents[id] = document.getElementById(id).addEventListener("click",
-//                 function plusBtn() {
-//                     let element = document.getElementById(tmpId);
-//                     let tmpCnt = parseInt(element.textContent) + 1;
-//                     element.textContent = tmpCnt.toString();
-//                 }
-        
-//             ); 
-//         }
-//     }
-//     console.log(tmpEvents);
-//     return tmpEvents;
-// }
-
-
-let start = document.getElementById("start").addEventListener("click",
+const start = document.getElementById("start").addEventListener("click",
     function enableAllCards() {
         startCount++;
+        console.log(startCount);
+        
         if (startCount % 2 == 1){
-            for (let i = 0; i < btnIds.length; i++) {
+            // To enable all buttons
+            this.textContent = "Reset";
+            for (var i = 0; i < btnIds.length; i++) {
             
                 var element = document.getElementById(btnIds[i]);
 
@@ -67,59 +44,65 @@ let start = document.getElementById("start").addEventListener("click",
             // Adding functionality
 
             // plus
-            let easyPlus = document.getElementById("easy_plus").addEventListener("click",
-                function plusBtn() {
-                    let element = document.getElementById("easy_cnt");
-                    let tmpCnt = parseInt(element.textContent) + 1;
+            var easyPlus = document.getElementById("easy_plus").addEventListener("click",
+                ()=> {
+                    var element = document.getElementById("easy_cnt");
+                    var tmpCnt = parseInt(element.textContent) + 1;
                     element.textContent = tmpCnt.toString();
+                    console.log(`${element.id}-----${element.textContent}`)
                 }
             
             );
-            let mediumPlus = document.getElementById("medium_plus").addEventListener("click",
-                function plusBtn() {
-                    let element = document.getElementById("medium_cnt");
-                    let tmpCnt = parseInt(element.textContent) + 1;
+            var mediumPlus = document.getElementById("medium_plus").addEventListener("click",
+                ()=> {
+                    var element = document.getElementById("medium_cnt");
+                    var tmpCnt = parseInt(element.textContent) + 1;
                     element.textContent = tmpCnt.toString();
+                    console.log(`${element.id}-----${element.textContent}`)
                 }
         
             );
 
-            let hardPlus = document.getElementById("hard_plus").addEventListener("click",
-                function plusBtn() {
-                    let element = document.getElementById("hard_cnt");
-                    let tmpCnt = parseInt(element.textContent) + 1;
+            var hardPlus = document.getElementById("hard_plus").addEventListener("click",
+                ()=> {
+                    var element = document.getElementById("hard_cnt");
+                    var tmpCnt = parseInt(element.textContent) + 1;
                     element.textContent = tmpCnt.toString();
+                    console.log(`${element.id}-----${element.textContent}`)
                 }
         
             );
 
             // minus
-            let easyMinus = document.getElementById("easy_minus").addEventListener("click",
-                function minusBtn() {
-                    let element = document.getElementById("easy_cnt");
+            var easyMinus = document.getElementById("easy_minus").addEventListener("click",
+                ()=> {
+                    var element = document.getElementById("easy_cnt");
                     if (parseInt(element.textContent) > 0){
-                        let tmpCnt = parseInt(element.textContent) - 1;
+                        var tmpCnt = parseInt(element.textContent) - 1;
                         element.textContent = tmpCnt.toString();
+                        console.log(`${element.id}-----${element.textContent}`)
                     }
                 }
             
             );
-            let mediumMinus = document.getElementById("medium_minus").addEventListener("click",
-                function minusBtn() {
-                    let element = document.getElementById("medium_cnt");
+            var mediumMinus = document.getElementById("medium_minus").addEventListener("click",
+                ()=> {
+                    var element = document.getElementById("medium_cnt");
                     if (parseInt(element.textContent) > 0){
-                        let tmpCnt = parseInt(element.textContent) - 1;
+                        var tmpCnt = parseInt(element.textContent) - 1;
                         element.textContent = tmpCnt.toString();
+                        console.log(`${element.id}-----${element.textContent}`)
                     }
                 }
             
             );
-            let hardMinus = document.getElementById("hard_minus").addEventListener("click",
-                function minusBtn() {
-                    let element = document.getElementById("hard_cnt");
+            var hardMinus = document.getElementById("hard_minus").addEventListener("click",
+                ()=> {
+                    var element = document.getElementById("hard_cnt");
                     if (parseInt(element.textContent) > 0){
-                        let tmpCnt = parseInt(element.textContent) - 1;
+                        var tmpCnt = parseInt(element.textContent) - 1;
                         element.textContent = tmpCnt.toString();
+                        console.log(`${element.id}-----${element.textContent}`)
                     }
                 }
             
@@ -128,23 +111,27 @@ let start = document.getElementById("start").addEventListener("click",
 
         }
         else{
-            for (let i = 0; i < btnIds.length; i++) {
-            
-                var element = document.getElementById(btnIds[i]);
-                const classname = element.className.split(" ")
-                classname.push("disabled");
-                element.className = classname.join(" ");
-                if(element.id.toString().split("_")[1] == "cnt"){
-                    element.textContent = "0";
-                    element.textContent = "Start";
-                }
+            if (confirm(`Are you sure you want to reset ?`)) {
+                location.reload(true);
             }
-
+            else {
+                console.log("No Reset...");
+                alert("Yah, thats the spirit...");
+                startCount--;
+            }
             
-
-
+            // for (var i = 0; i < btnIds.length; i++) {               
+            //     var element = document.getElementById(btnIds[i]);         
+            //     // to disable the button
+            //     const classname = element.className.split(" ")
+            //     classname.push("disabled");
+            //     element.className = classname.join(" ");
+            // }
+            
         }
+        
 
+        print();
     }
 
 );

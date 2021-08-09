@@ -22,6 +22,7 @@ class Solution
             results[i][0] = 0;
         }
         
+        // At max j attempts with only 1 egg in hand
         for(j = 0; j<=k; j++){
             results[1][j] = j;
         }

@@ -69,6 +69,94 @@ public:
 ```
 * Merge two sorted Arrays without extra space
 ```
+/*
+
+1. Gap algorithm; T(n) = O(N+M) x log(N+M); S(N) = O(1)
+Pseudo code
+- insert all elements in one array lets say v1
+- take s = M + N, add keep on swapping v1[i + ceil(s/2)] and v1[i] for i : 0 to M+N
+- now updated s = ceil(s/2) and do the above again until s > 0
+
+*/
+class Solution {
+public:
+    void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
+        for(int i = 0; i<n; i++) 
+            nums1[i+m] = nums2[i];
+
+        int s = m + n;
+        int tmp = ceil((double)s/2);
+        while(tmp)
+        {   
+            int i = 0;
+            while(i + tmp < s)
+            {
+                if(nums1[i] > nums1[i + tmp]) swap(nums1[i], nums1[i+tmp]);
+                i++;
+            }
+            if(tmp == 1) break;
+            tmp = ceil((double)tmp/2);
+        }
+        
+    }
+};
+
+/*
+2. T(n) = O(M+N), S(N) = O(N+M)
+*/
+
+class Solution {
+public:
+    void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
+        
+        vector<int> v(m + n);
+        int i = 0, j = 0, k = 0;
+        while(i<m and j<n)
+        {   
+            v[k++] = (nums1[i] < nums2[j]) ? nums1[i++] : nums2[j++];
+        }
+        
+        while(i<m) v[k++] = nums1[i++];
+        while(j<n) v[k++] = nums2[j++];
+        nums1 = v;
+        return;
+            
+    }
+};
+
+/*
+3. Insertion method T(N) = O(N*M) S(N) = O(1)
+*/
+
+class Solution {
+public:
+    void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
+        if(n == 0) return;
+        if(m==0){
+            nums1 = nums2;
+            return;
+        }
+        int i = 0, j = 0;
+        while(i<m)
+        {
+            if(nums1[i] <= nums2[j]) i++;
+            else{
+                swap(nums1[i], nums2[j]);
+                int l = j;
+                while(l+1<n)
+                {    
+                    if(nums2[l] > nums2[l+1]) swap(nums2[l], nums2[l+1]); 
+                    l++;
+                }            
+            }
+        }
+        
+        
+        for(i = 0; i<n; i++) nums1[i+m] = nums2[i];
+        return;
+            
+    }
+};
 
 ```
 * 

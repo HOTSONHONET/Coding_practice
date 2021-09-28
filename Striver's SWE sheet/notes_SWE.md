@@ -14,9 +14,64 @@
 ## Revision 👨🏼‍🎓🐱‍🏍
 
 ## [Day 1](#calender)
+
+* Sort an array of 0’s 1’s 2’s without using extra space or sorting algo 
+
 ```
-<-Nothing->
+class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+        int red, white, blue;
+        red = white = blue = 0;
+        
+        for(auto val : nums)
+        {
+            if(val == 0) red++;
+            else if(val == 1) white++;
+            else blue++;
+        }
+        
+        // cout<<red<<" "<<white<<" "<<blue<<endl;
+        int i = 0;
+        while(red--){
+            nums[i] = 0;
+            i++;
+        }
+        while(white--)
+        {   
+            nums[i] = 1;
+            i++; 
+        }
+        while(blue--){
+            nums[i] = 2;
+            i++; 
+        }
+        
+        // cout<<red<<" "<<white<<" "<<blue<<endl;
+
+    }
+};
 ```
+
+* Repeat and Missing Number 
+```
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+        int n = nums.size();
+        long sum = accumulate(nums.begin(), nums.end(), 0);
+        return (n*(n+1)/2) - sum;
+        
+        
+    }
+};
+
+```
+* Merge two sorted Arrays without extra space
+```
+
+```
+* 
 ## [Day 2](#calender)
 ```
 <-Nothing->

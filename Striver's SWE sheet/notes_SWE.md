@@ -159,7 +159,93 @@ public:
 };
 
 ```
-* 
+* Kadane's Algorithm
+
+```
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        int maxx, curr_sum;
+        maxx = curr_sum = nums[0];
+        for(int i = 1; i<nums.size(); i++)
+        {
+            if(curr_sum <= 0) curr_sum = 0;
+            curr_sum += nums[i];
+            maxx = max(maxx, curr_sum);
+        }
+        return maxx;
+        
+    }
+};
+```
+* Merge Overlapping Intervals
+```
+class Solution {
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        vector<vector<int>> ans;
+        int minn, maxx;
+        sort(intervals.begin(), intervals.end());
+        
+        int n = intervals.size();
+        
+        minn = intervals[0][0];
+        maxx = intervals[0][1];
+        vector<int> tmp;
+        for(int i = 1; i<n; i++)
+        {
+            if(maxx < intervals[i][0])
+            {   
+                tmp = {minn, maxx};
+                ans.push_back(tmp);
+                minn = intervals[i][0];
+                maxx = intervals[i][1];
+            }
+            
+            else if(maxx >= intervals[i][0]) maxx = max(maxx, intervals[i][1]);
+        }
+        
+        tmp = {minn, maxx};
+        ans.push_back(tmp);
+        return ans;
+        
+    }
+};
+```
+* Find the duplicate in an array of N+1 integers. 
+```
+/* 
+    Floyd's rabbit and turtle algorithm     
+    T(N) = O(N), S(N) = O(1) 
+*/
+
+class Solution {
+public:
+    int findDuplicate(vector<int>& nums) {
+        int n = nums.size(), hare = 0, turtle = 0;
+        // finding the first collision point
+        while(true)
+        {
+            hare = nums[nums[hare]];
+            turtle = nums[turtle];
+            
+            if(nums[hare] == nums[turtle]) break;
+        }
+        
+        
+        // Now we will slow down our hare, position it to start and start travelling 
+        // with the same pace as of turtle
+        hare = 0;
+        while(nums[hare] != nums[turtle])
+        {
+            turtle = nums[turtle];
+            hare = nums[hare];
+        }
+        
+        return nums[hare];
+    }
+};
+```
 ## [Day 2](#calender)
 ```
 <-Nothing->

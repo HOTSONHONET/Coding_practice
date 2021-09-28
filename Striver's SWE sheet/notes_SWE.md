@@ -1,6 +1,6 @@
-# Here, I will post code every day
+# Striver's SWE cheat sheet [💻](https://docs.google.com/document/d/1SM92efk8oDl8nyVw8NHPnbGexTS9W-1gmTEYfEurLWQ/edit)
 
-## Calender
+## Calender 📅
 
 | Tuesday      | Wednesday | Thursday      | Friday | Saturday      | Sunday      | Monday      |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
@@ -11,7 +11,7 @@
 | [29](#day-29)| [30](#day-30)  
 
 
-## Revision
+## Revision 👨🏼‍🎓🐱‍🏍
 
 ## [Day 1](#calender)
 ```

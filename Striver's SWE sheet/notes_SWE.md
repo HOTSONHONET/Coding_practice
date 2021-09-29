@@ -283,6 +283,73 @@ public:
     
 };
 ```
+* Pascal triangle
+```
+/* T(N) = O(N*N) S(N) = O(N*N)*/
+class Solution {
+public:
+    vector<vector<int>> generate(int numRows) {
+        vector<vector<int>> ans;
+        ans.push_back({1});
+        for(int i = 2; i<=numRows; i++)
+        {
+            vector<int> tmp(i);
+            for(int j = 0; j<i; j++)
+            {   
+                tmp[j] = (j == 0 || j == i-1) ? 1 : ans[i-2][j-1] + ans[i-2][j];
+            }
+            
+            ans.push_back(tmp);
+        }
+        
+        
+        return ans;
+        
+    }
+};
+```
+* Next Permutation
+```
+/*
+
+T(N) = O(N), S(N) = O(1)
+Idea
+====
+- Start traversing for the end (N-2 position) and find the first element at index i for which A[i] <= A[i+1]. The Save that i value.
+- If we didn't get any element then we will simply return the reverse of the array.
+- If we have a value then we will again iterate from the back to saved_i and try to find the first index for which A[saved_i] < A[j]. The saved this jth index.
+- Swap A[saved_i] and A[saved_j]
+- Then reverse A, from i+1 to end or (N-1)th position
+
+*/
+
+class Solution {
+public:
+    void nextPermutation(vector<int>& nums) {
+        int n = nums.size(), i, j;
+        for(i = n-2; i>=0; i--)
+        {
+            if(nums[i] < nums[i+1]) break;
+        }
+        
+        if(i<0)
+        {
+            reverse(nums.begin(), nums.end());
+            return;
+        }
+        
+        for(j=n-1; j>i; j--)
+        {
+            if(nums[j] > nums[i]) break;
+        }
+        
+        swap(nums[i], nums[j]);
+        reverse(nums.begin() + i + 1, nums.end());
+        return;
+    }
+};
+
+```
 
 * Stock Buy and Sell
 ```
@@ -307,6 +374,90 @@ public:
         
     }
 };
+```
+
+* Rotate Matrix
+```
+/*
+T(N) = O(N*N), S(N) = O(1)
+
+Idea
+====
+- First rotate the matrix wrt leading diagonal 
+- Then, rotate the matrix wrt vertical mid axis
+*/
+
+class Solution {
+public:
+    void rotate(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        // Rotation wrt leading diagonal
+        for(int i = 0; i<n; i++)
+            for(int j = 0; j<i; j++)
+                if(i!=j) swap(matrix[i][j], matrix[j][i]);
+        // Rotation wrt vertical axis
+        for(int i = 0; i<n; i++)
+            for(int j = 0; j<n/2; j++)
+                swap(matrix[i][j], matrix[i][n-1-j]);
+        
+        return;
+    }
+};
+```
+
+* Inversion count
+```
+#include <bits/stdc++.h>
+using namespace std;
+
+
+int merge(int arr[], int temp[], int left, int mid, int right)
+{
+	int i, j, k;
+	int inv_count = 0;
+
+	i = left; j = mid; k = left; 
+	while ((i <= mid - 1) && (j <= right)) {
+		if (arr[i] <= arr[j]) temp[k++] = arr[i++];
+		else {
+			temp[k++] = arr[j++];
+			inv_count = inv_count + (mid - i);
+		}
+	}
+	while (i <= mid - 1) temp[k++] = arr[i++];
+	while (j <= right) temp[k++] = arr[j++];
+    
+	for (i = left; i <= right; i++) arr[i] = temp[i];
+	return inv_count;
+}
+
+int _mergeSort(int arr[], int temp[], int left, int right)
+{
+	int mid, inv_count = 0;
+	if (right > left) {
+		mid = (right + left) / 2;
+        
+		inv_count += _mergeSort(arr, temp, left, mid);
+		inv_count += _mergeSort(arr, temp, mid + 1, right);
+		inv_count += merge(arr, temp, left, mid + 1, right);
+	}
+	return inv_count;
+}
+
+int mergeSort(int arr[], int array_size)
+{
+	int temp[array_size];
+	return _mergeSort(arr, temp, 0, array_size - 1);
+}
+
+int main()
+{
+	int arr[] = { 1, 20, 6, 4, 5 };
+	int n = sizeof(arr) / sizeof(arr[0]);
+	int ans = mergeSort(arr, n);
+	cout << " Number of inversions are " << ans;
+	return 0;
+}
 ```
 
 ## [Day 3](#calender)

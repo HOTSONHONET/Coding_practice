@@ -247,6 +247,43 @@ public:
 };
 ```
 ## [Day 2](#calender)
+
+* Set Matrix Zeroes
+```
+/*
+T(N) = O(N+M), S(N) = O(1)
+
+Idea
+====
+- Use the first row and col to check whether the entire row or col should become 0 or not
+- First, check for all values
+- After that traverse from bottom right corner and for each value check whether the top row and col for the corresponding position is 0 or not
+- if 0 then make the current element as zero
+*/
+
+class Solution {
+public:
+    void setZeroes(vector<vector<int>>& matrix) {
+        int rows = matrix.size(), cols = matrix[0].size();
+        bool flag = false;
+        for(int i = 0; i<rows; i++)
+        {
+            if (matrix[i][0] == 0) flag = true;
+            for(int j = 1; j<cols; j++)
+                if(matrix[i][j] == 0) matrix[0][j] = matrix[i][0] = 0;
+        }
+        
+        for(int i = rows-1; i>=0; i--)
+        {   
+            for(int j = cols-1; j>=1; j--)
+                if(matrix[0][j] == 0 or matrix[i][0] == 0) matrix[i][j] = 0;   
+            if(flag) matrix[i][0] = 0;
+        }
+    }  
+    
+};
+```
+
 * Stock Buy and Sell
 ```
 class Solution {

@@ -247,8 +247,29 @@ public:
 };
 ```
 ## [Day 2](#calender)
+* Stock Buy and Sell
 ```
-<-Nothing->
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        if(n == 1) return 0;
+        
+        int ans = 0;
+        for(int i = 1; i<n; i++)
+        {
+            if(prices[i] > prices[i-1])
+            {
+                ans = max(ans, prices[i] - prices[i-1]);
+                prices[i] = prices[i-1];
+            }
+        }
+        
+        return ans;
+        
+        
+    }
+};
 ```
 
 ## [Day 3](#calender)

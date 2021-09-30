@@ -461,9 +461,83 @@ int main()
 ```
 
 ## [Day 3](#calender)
+
+* Search in a 2D matrix 
 ```
-<-Nothing->
+/* Binary search approach*/
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        int rows = matrix.size(), cols = matrix[0].size();
+        int l = 0, r = rows*cols - 1;
+        while(l<=r)
+        {   
+            int mid = l + (r-l)/2;
+            int curr_ele = matrix[mid/cols][mid%cols];
+            if(curr_ele == target) return true;
+            else if(curr_ele > target) r = mid - 1;
+            else l = mid + 1;
+        }
+        return false;
+    }
+};
 ```
+* Pow(x, n)
+```
+/* T(N) = O(log(N) */
+class Solution {
+public:
+    double myPow(double x, int n) {
+        double ans = 1;
+	// storing it int long long because n lies between -2**31 to 2**31 - 1
+	// if we are making n positive and n == -2**31 then we will get integer overflow error
+        long long nn = (n<0) ? -1*n : n; 
+        while(nn > 0)
+        {
+            if(nn&1)
+            {
+                nn -= 1;
+                ans *= x;
+            }else{
+                x *= x;
+                nn /= 2;                
+            }            
+        }
+        
+        if(n<0) ans = (double)(1.0)/(double)(ans);
+        return ans;
+    }
+};
+```
+
+* Majority element n/2
+```
+/*
+T(N) = O(N), S(N) = O(N)
+
+Idea
+====
+- We will use Moore's voting algorithm. Below is the implementation
+- Intuition: since the required number occurs n/2 times we will always end up with the number via the following steps of the alogrithm
+*/
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        int ele = 0, cnt = 0;
+        for(auto i: nums)
+        {
+            if(cnt == 0) ele = i;
+            if(i == ele) cnt++;
+            else cnt--;
+        }
+        
+        return ele;
+        
+        
+    }
+};
+```
+* Majority element n/3
 
 ## [Day 4](#calender)
 ```

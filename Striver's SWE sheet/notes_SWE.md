@@ -538,6 +538,131 @@ public:
 };
 ```
 * Majority element n/3
+```
+/*
+T(N) = O(N), S(N) = O(1)
+
+Idea
+====
+- We will ue Boyer Moore Algorithm which is an modification of Moore's algorithm
+- Here, since we have to find element has frequency is greater then floor(N/3)
+- So, we will have at max 2 elements (at max 2 => 2 is included)
+- Thus the procedure is similar as above with little modification like now we will search for 2 elements instead of one
+- In the end, we will again check if our answers have the appropriate frequency
+
+*/
+
+class Solution {
+public:
+    vector<int> majorityElement(vector<int>& nums) {
+        vector<int> ans;
+        int num1 = -1, num2 = -1, cnt1 = 0, cnt2 = 0;
+        for(auto i: nums)
+        {   
+            if(num1 == i) cnt1++;
+            else if(num2 == i) cnt2++;
+            
+            else if(cnt2 == 0){ num2 = i; cnt2 = 1; }
+            else if(cnt1 == 0){ num1 = i; cnt1 = 1; }
+            
+            else{ cnt1--; cnt2--; }
+        }
+        
+        int freq = nums.size()/3;
+        if(count(nums.begin(), nums.end(), num1) > freq) ans.push_back(num1);
+        if(num1 != num2 and count(nums.begin(), nums.end(), num2) > freq) 
+            ans.push_back(num2);
+        return ans;
+    }
+};
+```
+
+* Unique paths
+```
+/*Dynamic programming approach*/
+class Solution {
+public:
+    
+    int updateAns(int m, int n, int i, int j, vector<vector<int>> &dp)
+    {
+        if(i>=m or j>=n) return 0;
+        if((i == m-1) and (j == n-1)) return 1;
+        return dp[i][j] = (dp[i][j] != -1) ? dp[i][j] : updateAns(m, n, i+1, j, dp) + updateAns(m, n, i, j+1, dp);        
+    }
+    
+    int uniquePaths(int m, int n) {
+        vector<vector<int>> dp(m, vector<int>(n, -1));        
+        return updateAns(m, n, 0, 0, dp);
+    }
+};
+
+/* 
+- Most optimal approach is to use combinatrics 
+- Here total number of directions we can take (m-1) for right and (n-1) for down, thus total is m + n - 2
+- Formula used here is C(m+n-2, n-1) + C(m+n-2, m-1)
+- Below is the away we optimally caluculate Combination
+
+*/
+class Solution {
+public:
+
+    int uniquePaths(int m, int n) {
+        int N = m + n - 2;
+        int r = m - 1;
+        double res = 1;
+        for(int i = 1; i<=r; i++) res *= (N - r + i)/i;
+        return (int)res;
+    }
+};
+```
+* Reverse pairs
+```
+
+/* T(N) = O(N x log(N), S(N) = O(N) */
+class Solution {
+public:
+    
+    int merge(vector<int> &nums, int low, int mid, int high)
+    {
+        int cnt = 0;
+        int j = mid+1;
+        for(int i = low; i<=mid; i++)
+        {
+            while(j<=high and nums[i] > 2LL * nums[j]) j++;
+            cnt += (j - (mid + 1));
+        }   
+        
+        vector<int> tmp;
+        int left = low, right = mid + 1;
+        while(left<=mid and right<=high)
+        {
+            if(nums[left]<=nums[right]) tmp.push_back(nums[left++]);
+            else tmp.push_back(nums[right++]);
+        }
+        
+        while(left<=mid) tmp.push_back(nums[left++]);
+        while(right<=high) tmp.push_back(nums[right++]);
+        
+        for(int i = low; i<=high; i++) nums[i] = tmp[i - low];
+        return cnt;
+        
+    }
+    
+    int mergeSort(vector<int> &nums, int low, int high)
+    {
+        if(low>=high) return 0;
+        int mid = low + (high - low)/2;
+        int inv = mergeSort(nums, low, mid);
+        inv += mergeSort(nums, mid+1, high);
+        inv += merge(nums, low, mid, high);
+        return inv;
+    }
+    
+    int reversePairs(vector<int>& nums) {
+        return mergeSort(nums, 0, nums.size() - 1);
+    }
+};
+```
 
 ## [Day 4](#calender)
 ```

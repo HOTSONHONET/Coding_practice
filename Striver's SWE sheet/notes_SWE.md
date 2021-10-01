@@ -665,9 +665,81 @@ public:
 ```
 
 ## [Day 4](#calender)
+* Two Sum
 ```
-<-Nothing->
+/* T(N) = O(NlogN), S(N) = O(1) */
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        
+        int n = nums.size();        
+        vector<int> tmp(nums.begin(), nums.end());
+        sort(nums.begin(), nums.end());
+        int l = 0, r = n-1;
+        vector<int> ans;
+        while(l<=r)
+        {
+            int sum = nums[l] + nums[r];
+            if(sum == target and l != r) break;
+            else if(sum < target) l++;
+            else r--;
+        }
+        
+        int save_l;
+        for(int i = 0; i<n; i++) if(tmp[i] == nums[l]){ save_l = i; ans.push_back(i); break;}
+        for(int i = 0; i<n; i++) if(tmp[i] == nums[r] and save_l != i){ ans.push_back(i); break;}
+        
+        return ans;
+        
+        
+    }
+};
 ```
+* 4Sum
+```
+/* T(N) = O(N^3), S(N) = O(1)*/
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+
+        vector<vector<int>> ans;
+        int n = nums.size();
+        if(n == 0) return ans;
+        
+        
+        sort(nums.begin(), nums.end());
+        vector<int> tmp;
+        
+        for(int i = 0; i<n; i++)
+        {    
+            for(int j = i+1; j<n; j++)
+            {   
+                int l = j+1, r = n-1;
+                long long two_sum1 = target - nums[i] - nums[j];
+                while(l < r)
+                {   
+                    long long two_sum2 = nums[l] + nums[r];
+                    if(two_sum2 < two_sum1) l++;
+                    else if(two_sum2 > two_sum1) r--;
+                    else{
+                        tmp = {nums[i], nums[j], nums[l], nums[r]};
+                        ans.push_back(tmp);
+                        
+                        while(l < r and nums[l] == tmp[2]) ++l;
+                        while(l < r and nums[r] == tmp[3]) --r;
+                    }
+                }
+                
+                while(j + 1 < n and nums[j+1] == nums[j]) ++j;
+            }
+            while(i + 1 < n and nums[i+1] == nums[i]) ++i;
+        }
+        
+        return ans;
+    }
+};
+```
+* 
 
 ## [Day 5](#calender)
 ```

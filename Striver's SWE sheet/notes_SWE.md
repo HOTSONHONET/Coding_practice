@@ -807,7 +807,7 @@ int solve(vector<int> &A, int B)
 ```
 * Longest substring without repeat
 ```
-/* T(N) =  S(N) =  */
+/* T(N) = O(N) S(N) = O(N) */
 ![image](https://user-images.githubusercontent.com/56304060/135723727-e2e96cb2-083e-4a44-bece-84c8e02e117a.png)
 
 class Solution {

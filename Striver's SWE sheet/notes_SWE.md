@@ -834,8 +834,216 @@ public:
 ```
 
 ## [Day 5](#calender)
+
+* Reverse a linked list
 ```
-<-Nothing->
+/* T(N) = O(N), S(N) = O(N) */
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int left = 0, right = 0;
+        int n = s.size(), ans = 0;
+        
+        vector<int> finder(256, -1); // finder is here a hashSet
+        while(right < n)
+        {
+            if(finder[s[right]] != -1) 
+                left = max(finder[s[right]] + 1, left);
+            
+            finder[s[right]] = right;
+            ans = max(right - left + 1, ans);     
+            right++;
+        }
+        
+        return ans;
+    }
+};
+```
+* Find the middle element of the linked list
+```
+/* T(N) = O(N), S(N) = O(1) */
+
+class Solution {
+public:
+    ListNode* middleNode(ListNode* head) {
+        int n = 0;
+        ListNode *tmp = head;
+        while(tmp != NULL)
+        {
+            n++;
+            tmp = tmp->next;
+        }
+        
+        
+        int mid = n/2;
+        tmp = head;
+        while(mid--)
+        {
+            tmp = tmp->next;
+        }
+        
+        return tmp;
+        
+    }
+};
+```
+* Merge two sorted arrays
+```
+/* T(N) = O(N), S(N) = O(1) */
+
+class Solution {
+public:
+    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+        if(l1 == NULL and l2 == NULL) return NULL;
+        if(l1 == NULL) return l2;
+        if(l2 == NULL) return l1;
+        
+        ListNode* curr;
+        if(l1->val < l2->val){
+            curr = new ListNode(l1->val);
+            l1 = l1->next;
+        }else{
+            curr = new ListNode(l2->val);
+            l2 = l2->next;
+        }
+        
+        ListNode* to_return = curr;
+        while(l1 != NULL and l2 != NULL)
+        {
+            if(l1->val < l2->val)
+            {
+                curr->next = new ListNode(l1->val);
+                l1 = l1->next;
+            }
+            else{
+                curr->next = new ListNode(l2->val);
+                l2 = l2->next;
+            }            
+            curr = curr->next;
+        }
+        
+        
+        curr->next = (l1 == NULL) ? l2 : l1;
+        return to_return;
+        
+    }
+};
+```
+* Remove Nth node from the end of a linked list
+```
+/* T(N) = O(N), S(N) = O(1) */
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int N) {
+        ListNode* tmp = head;
+        int n = 1;
+        while(tmp->next){
+            ++n;
+            tmp = tmp->next;
+        }
+        
+        if(n==1) return NULL;
+        if(n == N)
+        {
+            head = head->next;
+            return head;
+        }
+        
+        cout<<"n "<<n<<endl;
+        
+        int i = 0;
+        tmp = head;
+        while(i != n - N - 1)
+        {
+            tmp = tmp->next;
+            i++;
+        }
+        
+        ListNode* tmp2 = tmp->next->next;
+        tmp->next = NULL;
+        tmp->next = tmp2;
+        return head;
+        
+    }
+};
+```
+* Delete a node in constant time
+```
+/* T(N) = O(1), S(N) = O(1) */
+class Solution {
+public:
+    void deleteNode(ListNode* node) {
+        *node = *node->next;        
+        node = NULL;
+    }
+};
+```
+
+* Add two numbers represented in linked list
+```
+/* T(N) = O(N), S(N) = O(1) */
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        int carry = 0, sum = 0;       
+
+        ListNode* curr = new ListNode(0), *ans;
+        ans = curr;
+        while(l1 != NULL and l2 != NULL)
+        {   
+            sum = l1->val + l2->val + carry;
+            carry = sum/10; sum %= 10;
+            curr->next = new ListNode(sum);
+            l1 = l1->next; l2 = l2->next; 
+            curr = curr->next;
+        }
+        
+        if(carry>0 or l1!=NULL or l2!= NULL){
+            ListNode* tmp = ans;
+            while(tmp->next != NULL) tmp = tmp->next;
+            
+            if(l1 == NULL)
+            {
+                while(l2 != NULL)
+                {   
+                    sum = l2->val + carry;
+                    carry = sum/10; sum %= 10;
+                    tmp->next = new ListNode(sum);
+                    tmp = tmp->next;
+                    l2 = l2->next;
+                }
+            }
+            else{
+                while(l1 != NULL)
+                {   
+                    sum = l1->val + carry;
+                    carry = sum/10; sum %= 10;
+                    tmp->next = new ListNode(sum);
+                    tmp = tmp->next;
+                    l1 = l1->next;
+                }
+            }
+            
+            if(carry > 0) tmp->next = new ListNode(carry);
+            
+        }
+        
+        return ans->next;
+        
+    }
+};
 ```
 
 ## [Day 6](#calender)

@@ -739,6 +739,54 @@ public:
     }
 };
 ```
+* Longest Increasing Subsequence
+```
+/* T(N) = O(N), S(N) = O(1) */
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) {
+        unordered_set<int> finder;
+        for(auto i: nums) finder.insert(i);
+        int maxx = 0;
+        for(auto i: nums)
+        {   
+            int cnt = 0;
+            if(finder.find(i-1) == finder.end())
+            {   
+                int tmp = i;
+                while(finder.find(tmp++) != finder.end()) cnt++;
+                maxx = max(maxx, cnt);
+            }
+        }
+        
+        return maxx;
+    }
+};
+```
+* Largest subarray with zero sum
+```
+/* T(N) = O(N), S(N) = O(1) */
+class Solution{
+    public:
+    int maxLen(vector<int>&A, int n)
+    {   
+        // Your code here
+        unordered_map<int, int> finder;
+        int sum = 0, ans = 0;
+        for(int i = 0; i<n; i++)
+        {
+            sum += A[i];
+            if(sum == 0) ans = i + 1;
+            else{ 
+                if(finder.find(sum) != finder.end()) ans = max(ans, i - finder[sum]);
+                else finder[sum] = i;
+            }
+        }
+        
+        return ans;
+    }
+};
+```
 * 
 
 ## [Day 5](#calender)

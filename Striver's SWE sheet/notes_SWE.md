@@ -787,7 +787,51 @@ class Solution{
     }
 };
 ```
-* 
+* Count number of subarrays with zero xor
+```
+/* T(N) = O(N) S(N) = O(1) */
+int solve(vector<int> &A, int B)
+{
+	map<int, int> freq;
+	int cnt = 0, xorr = 0;
+	for(auto i: A)
+	{
+		xorr = xorr ^ i;
+		if(xor == B) cnt++;
+		if(freq.find(xorr^B) != freq.end()) cnt += freq[xorr^B];
+		
+		freq[xorr] += 1;
+	}
+	return cnt;
+}
+```
+* Longest substring without repeat
+```
+/* T(N) =  S(N) =  */
+![image](https://user-images.githubusercontent.com/56304060/135723727-e2e96cb2-083e-4a44-bece-84c8e02e117a.png)
+
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int left = 0, right = 0;
+        int n = s.size(), ans = 0;
+        
+        vector<int> finder(256, -1); // finder is here a hashSet
+        while(right < n)
+        {
+            if(finder[s[right]] != -1) 
+                left = max(finder[s[right]] + 1, left);
+            
+            finder[s[right]] = right;
+            ans = max(right - left + 1, ans);     
+            right++;
+        }
+        
+        return ans;
+    }
+};
+
+```
 
 ## [Day 5](#calender)
 ```

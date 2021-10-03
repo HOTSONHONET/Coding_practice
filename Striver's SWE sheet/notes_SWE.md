@@ -1047,8 +1047,44 @@ public:
 ```
 
 ## [Day 6](#calender)
+* Intersection point in a linkedlist
 ```
-<-Nothing->
+"""
+T(N) = O(N), S(N) = O(1)
+ 
+Definition for singly-linked list.
+class ListNode:
+     def __init__(self, x):
+         self.val = x
+         self.next = None
+"""
+class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
+        if(headA == None or headB == None): return NULL;
+        startA = headA; startB = headB;
+        while(startA != startB):        
+            startA = headB if (startA == None) else startA.next
+            startB = headA if (startB == None) else startB.next
+             
+        return startA
+        
+	
+/* T(N) = O(N), S(1) */
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        if(headA == NULL || headB == NULL) return NULL;
+        ListNode* startA = headA, *startB = headB;
+        while(startA != startB)
+        {   
+            startA = (startA == NULL) ? headB : startA->next;
+            startB = (startB == NULL) ? headA : startB->next;
+        }
+        
+        return startA;
+    }
+};
+        
 ```
 
 ## [Day 7](#calender)

@@ -1087,6 +1087,202 @@ public:
         
 ```
 
+* Linked List Cycle
+```
+/* T(N) = O(N), S(N) = O(1) */
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        if(head == NULL) return false;
+        ListNode* hare, *turtle;
+        hare = turtle = head;
+        
+        while(true)
+        {
+            if(hare->next == NULL or turtle == NULL or hare->next->next == NULL) 
+                return false;
+            hare = hare->next->next;
+            turtle = turtle->next; 
+            
+            if(hare == turtle) return true;          
+                      
+        }
+
+    }
+};
+```
+* Reverse a LinkedList in groups of size k. 
+```
+/* T(N) = O(N), S(N) = O(1) */
+/*
+Idea:
+====
+- The idea is to reverse k-1 connections for every group
+- Use a dummy node for prev node
+*/
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        
+        if(head == NULL || k == 1) return head;
+        
+        ListNode* dummy = new ListNode(0);
+        dummy->next = head;
+        ListNode* curr, *next, *prev;
+        curr = next = prev = dummy;
+        
+        int n = 0;
+        while(curr->next != NULL)
+        {
+            n++;
+            curr = curr->next;
+        }
+        
+        while(n >= k)
+        {
+            curr = prev->next;
+            next = curr->next;
+                
+            for(int i = 1; i<k; i++)
+            {
+                curr->next = next->next;
+                next->next = prev->next;
+                prev->next = next;
+                next = curr->next;               
+            }
+            
+            prev = curr;
+            n -= k;        
+        }
+        
+        return dummy->next;
+        
+        
+    }
+};
+```
+* Palindromic Linked list
+```
+/* T(N) = O(N), S(N) = O(1) */
+
+/*
+Idea
+====
+- Use Flyod's rabbit and turtle algoithm to place the turtle at a that node whose next node is the ending of the 2nd half the palindrome
+- The reverse the 2nd half
+- Move the rabbit to the head node or Use the head itself and check it with the turtle whether the LL is a palindrome or not
+*/
+class Solution {
+public:
+    ListNode* reverse(ListNode* tmp)
+    {
+        ListNode* curr = NULL;
+        while(tmp)
+        {
+            ListNode* next = tmp->next;
+            tmp->next = curr;
+            curr = tmp;
+            tmp = next;            
+        }
+        
+        return curr;
+        
+    }
+    
+    bool isPalindrome(ListNode* head) {
+        
+        ListNode *turtle, *rabbit;
+        turtle = rabbit =  head;
+        
+        while(rabbit->next != NULL and rabbit->next->next != NULL)
+        {
+            turtle = turtle->next;
+            rabbit = rabbit->next->next;
+        }
+        
+        
+        turtle->next = reverse(turtle->next);
+        turtle = turtle->next;
+        
+        while(turtle != NULL)
+        {
+            if(turtle->val != head->val) return false;
+            turtle = turtle->next;
+            head = head->next;
+        }
+        
+        return true;        
+        
+    }
+};
+```
+* Find the starting node of the cycle in a LinkedList
+![image](https://user-images.githubusercontent.com/56304060/135771645-5b604c0d-8b4e-4ded-a6c5-82d2ea0b098c.png)
+```
+/* T(N) = O(N), S(N) = O(1) */
+/*
+Idea
+====
+- Use Flyod's turtle and rabbit algorithm to check whether the LL contains a loop
+- Stop at collision point and place the rabbit to head node
+- Now start moving rabbit and turtle one step at a time, the point where they collide will be our ans
+*/
+
+class Solution {
+public:
+    ListNode *detectCycle(ListNode *head) {
+        if(head == NULL || head->next == NULL) return NULL;
+        
+        ListNode* turtle, *rabbit;
+        turtle =  rabbit = head;
+        
+        while(rabbit->next != NULL and rabbit->next->next != NULL)
+        {   
+            turtle = turtle->next;
+            rabbit = rabbit->next->next;
+            if(rabbit == turtle) 
+            {
+                rabbit = head;
+                while(rabbit != turtle)
+                {
+                    rabbit = rabbit->next;
+                    turtle = turtle->next;
+                }
+
+                return turtle;
+            }           
+        }
+        
+        return NULL;
+    }
+};
+
+```
+* Rotate a LinkedList
+```
+/* T(N) = O(N), S(N) = O(1) */
+class Solution {
+public:
+    ListNode* rotateRight(ListNode* head, int k) {
+        if(head == NULL || head->next == NULL || k == 0)
+            return head;
+        int cnt = 1;
+        ListNode* curr = head;
+        while(curr->next != NULL and ++cnt) curr = curr->next;
+
+        curr->next = head;
+        k = cnt - (k % cnt);        
+        while(k--) curr = curr->next;
+
+        head = curr->next;
+        curr->next = NULL;
+        
+        return head;
+        
+    }
+};
+```
+
 ## [Day 7](#calender)
 ```
 <-Nothing->

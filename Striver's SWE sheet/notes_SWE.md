@@ -1341,10 +1341,143 @@ Node* flatten(Node *root)
 ```
 
 ## [Day 7](#calender)
-```
-<-Nothing->
+
+* Clone a linkedList
+<table>
+  <tr align="center">
+    <td>Make copies of each node adjacent to them</td>
+    <td>Assign the random pointers</td>
+    <td>Get the deep copy and retrive the original</td>
+    <td>T(N) and S(N)</td>
+  </tr>
+  <tr>
+    <td><img src="https://user-images.githubusercontent.com/56304060/135890289-929ab59b-a761-4399-88d3-96efb4262fca.png" width=500 height=200></td>
+    <td><img src="https://user-images.githubusercontent.com/56304060/135890106-dc853c27-fc46-4cab-b2dd-b3ae0eae7dc3.png" width=500 height=200></td>
+    <td><img src="https://user-images.githubusercontent.com/56304060/135889965-4a455c06-b222-418d-8f12-05c1282676e5.png" width=500 height=200></td>
+    <td><img src="https://user-images.githubusercontent.com/56304060/135889819-2f74b3f2-2ef4-4759-aa21-d7dd9b7d0434.png" width=500 height=200></td>
+  </tr>
+ </table>
+
 ```
 
+```
+* 3SUM
+```
+/* T(N) = O(N^2), S(N) = O(1) */
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        int n = nums.size();
+        vector<vector<int>> ans;        
+        sort(nums.begin(), nums.end());
+        
+        for(int i = 0; i<n-2; i++)
+        {    
+            if(i == 0 || (i>0 and nums[i] != nums[i-1]))
+            {   
+                int l = i + 1, r = n-1;
+                int target = 0 - nums[i];
+                while(l < r)
+                {   
+                    int sum = nums[l] + nums[r];
+                    if(sum == target)
+                    {
+                        vector<int> tmp = {nums[i], nums[l], nums[r]};
+                        ans.push_back(tmp);
+                        
+                        while(l<r and nums[l] == nums[l+1]) l++;
+                        while(l<r and nums[r] == nums[r-1]) r--;
+                        
+                        l++; r--;
+                    }
+                    else if(sum < target) l++;
+                    else r--;
+                }
+            }
+        }
+        
+        return ans;
+    }
+};
+```
+* Tapping rain water
+```
+/* T(N) = O(N), S(N) = O(N) */
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        int n = height.size();
+        if(n==0) return 0;
+        
+        int left[n], right[n];        
+        left[0] = height[0]; right[n-1] = height[n-1];
+        
+        for(int i = 1; i<n; i++)        
+            left[i] = max(left[i-1], height[i]);
+
+        for(int i = n-2; i>=0; i--)          
+            right[i] = max(right[i+1], height[i]);
+
+        int total_water_content = 0;
+        for(int i = 0; i<n; i++)
+            total_water_content += min(left[i], right[i]) - height[i];
+
+        return total_water_content;
+    }
+};
+```
+
+* Remove duplicates from a sorted array
+```
+/* T(N) = O(N), S(N) = O(1) */
+class Solution {
+public:
+    
+    int MAX = 1000;
+    int removeDuplicates(vector<int>& nums) {
+        int n = nums.size();
+        if(n <= 1) return n;
+        
+        int ptr = nums[0];        
+        for(int i = 1; i<n; i++) 
+        {
+            if(nums[i] == ptr) nums[i] = MAX;
+            else ptr = nums[i];
+        }
+        
+        sort(nums.begin(), nums.end());        
+        int ans = 0, i = 0;
+        while(i<n)
+        {
+            if(nums[i++] != MAX) ans++;
+        }
+        return ans;
+        
+    }
+};
+```
+* Max consecutive ones
+```
+/* T(N) = O(N), S(N) = O(1) */
+class Solution {
+public:
+    int findMaxConsecutiveOnes(vector<int>& nums) {
+        int n = nums.size();
+        int maxx = 0, sum = 0;
+        for(int i = 0; i<n; i++)
+        {
+            if(nums[i] == 0)
+            {
+                maxx = max(sum, maxx);
+                sum = 0;
+                
+            }else sum++;
+        }
+        
+        return max(maxx, sum);
+    }
+};
+```
 ## [Day 8](#calender)
 ```
 <-Nothing->

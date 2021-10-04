@@ -1359,6 +1359,50 @@ Node* flatten(Node *root)
  </table>
 
 ```
+# Definition for a Node.
+class Node:
+    def __init__(self, x: int, next: 'Node' = None, random: 'Node' = None):
+        self.val = int(x)
+        self.next = next
+        self.random = random
+"""
+
+class Solution:
+    def copyRandomList(self, head: 'Node') -> 'Node':
+        if(head == None):
+            return None
+        
+        # Step 1:  Make copies of nodes adjacent to each node
+        start = front = head
+        while(start != None):
+            front = start.next
+            newNode = Node(start.val)
+            start.next = newNode
+            newNode.next = front
+            start = front
+        
+        # Step 2: Make connections with random pointers
+        start = head
+        while(start != None):
+            if(start.random != None):
+                start.next.random = start.random.next
+            start = start.next.next
+        
+        # Step 3: Extract the deep copy and retrieve the original
+        start = head
+        front = start.next
+        to_return = front
+        while(True):
+            if(front.next == None):
+                break
+            start_next = front.next
+            start.next = start_next
+            front.next = start_next.next           
+            
+            start = start.next
+            front = front.next
+        
+        return to_return
 
 ```
 * 3SUM

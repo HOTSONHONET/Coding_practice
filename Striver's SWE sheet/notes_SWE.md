@@ -1523,8 +1523,77 @@ public:
 };
 ```
 ## [Day 8](#calender)
+* N meeting in one room
 ```
-<-Nothing->
+/* T(N) = O(N), S(N) = O(N) */
+class Solution
+{
+    public:
+    static bool cmp_times(pair<int, int> &a, pair<int, int> &b)
+    {
+        return a.second < b.second;
+    }
+    
+    int maxMeetings(int start[], int end[], int n)
+    {
+        vector<pair<int, int>> times;
+        for(int i = 0; i<n; i++)
+        {
+            pair<int,int> tmp = {start[i], end[i]};
+            times.push_back(tmp);
+        }
+        
+        sort(times.begin(), times.end(), cmp_times);
+        int cnt = 1;
+        pair<int, int> curr_meet = times[0];
+        for(int i = 1; i<n; i++)
+        {
+            if(curr_meet.second < times[i].first)
+            {
+                cnt++;
+                curr_meet = times[i];
+            }
+        }
+        
+        return cnt;
+        
+    }
+};
+```
+* Minimum number of platforms required for a railway
+```
+/* 
+T(N) = O(N), S(N) = O(1)
+
+Idea
+====
+- Sort arrival and departure times in increasing order
+- Initially, our answer will be 1
+- Use two-pointer approach, one starting at i = 1 index for arrival times and another starting at j = 0 for departure time
+- Now, simply check for current instance, how many plaform we require
+- lets say if a train's arrival times is less the current departure time then we can say that we require another platform because rest of the will be filled with other trains
+- Now, in the opposite case, we will be requiring less than 1 platform than the current number
+*/
+class Solution{
+    public:
+    int findPlatform(int arr[], int dep[], int n)
+    {
+    	sort(arr, arr + n); sort(dep, dep + n);    	
+    	int i = 1, j = 0, cnt = 1, maxx = 1;
+    	while(i < n)
+    	{
+    	    if(arr[i] <= dep[j])
+    	    {   
+    	        cnt++; i++;
+    	    }else{
+    	        cnt--;
+    	        j++;
+    	    }    	    
+    	    if(cnt > maxx) maxx = cnt;
+    	}    	
+    	return maxx;    	
+    }
+};
 ```
 
 ## [Day 9](#calender)

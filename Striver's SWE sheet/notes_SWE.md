@@ -1595,6 +1595,241 @@ class Solution{
     }
 };
 ```
+* Maximum Profit in Job Scheduling
+```
+/*
+T(N) = O(N * logN), S(N) = O(N) 
+Idea
+====
+- Use struct/class to create a data type that consist of startTime, endTime and profit
+- Use it to store the jobs in an array
+- Sort the elements of the array wrt endTime
+- Create a look up table to store the maximum profit for each i : 0 to n-1 jobs
+- The look up table will store the maximum profit that we got for a particular ending time T
+- Now, traverse the jobs and for each index 'i' find the maximum profit we can obtain if we have i jobs
+- Use binary search to look for those profits stored between 0 to i-1 indices in the look up table; that are not colliding with the current job startTime
+- After each finding the maximum profit update the look up table; it is basically : max(profit w/o adding current job, profit with adding current job)
+- The main thing to catch is that when we say 'profit with adding current job', it might happen that we may not get any jobs before the current job to add-on
+- That's why, in that case we require to insert the maximum profit we got w/o adding the job in the look up table.
+- In the end, return the last element profit from the look up table
+
+class Solution {
+public:
+    
+    struct job{
+        int stime, etime, profit; 
+        job(int st, int et, int p){
+            stime = st; etime = et;
+            profit = p;
+        }
+    };
+    
+    
+    static bool comp(job j1, job j2){
+        return j1.etime < j2.etime; 
+    }
+    
+    
+    int jobScheduling(vector<int>& startTime, vector<int>& endTime, vector<int>& profit) {
+        int n = profit.size();
+        vector<job> jobs;
+        
+        for(int i=0; i<n; i++){
+            job jb (startTime[i], endTime[i], profit[i]);
+            jobs.push_back(jb);
+        }
+        
+        /* Sort jobs according to their ending time */
+        
+        sort(jobs.begin(), jobs.end(), comp);
+        
+        vector<pair<int,int>> dp;       // --> vector of pair {endTime, profit}
+        
+        dp.push_back({jobs[0].etime, jobs[0].profit});
+        
+        /* Since jobs vector is sorted by endtime, we can use binary search to find max profit so far */
+        
+        for(int i=1; i<n; i++){
+            
+            /* 
+                start and end defines the range of binary search as we need to find max profit 
+                before the start time of current job
+            */
+            
+            int start = 0, end = i-1;
+            int maxProfit = 0;
+            
+            while(start<=end){
+                int mid = start + (end-start)/2;
+                
+                if(dp[mid].first <= jobs[i].stime){
+                    maxProfit = dp[mid].second;
+                    start = mid+1;
+                }
+                else
+                    end = mid-1;
+            }
+            
+            /* Max profit =  max (profit including this job, profit with incuding this job so far) */
+            
+            maxProfit = max({maxProfit+jobs[i].profit, dp.back().second});
+            
+            dp.push_back({jobs[i].etime, maxProfit});
+        }
+        
+        return dp.back().second;
+    }
+};
+
+*/
+```
+* Fractional KnapSack
+```
+/*
+	T(N) = O(N), S(N) = O(1)
+*/
+class Solution
+{
+    public:
+    double fractionalKnapsack(int W, Item arr[], int n)
+    {
+        sort(arr, arr + n, [](Item a Item b){
+            return (double)a.value/(double)a.weight > (double)b.value/(double)b.weight;
+        });
+        int i = 0; double ans = 0;
+        while(i<n)
+        {   
+            if(W>=arr[i].weight)
+            {
+	    	ans += arr[i].value;
+                W -= arr[i].weight;
+            }else{
+                ans += W*(double)arr[i].value/(double)arr[i].weight;
+                break;
+            }
+            i++;
+        }
+        return ans;
+    }        
+};
+
+```
+* Greedy algorithm to find minimum number of coins
+```
+/* 
+
+Idea
+====
+- This is not a coin change dp problem
+- Here, the twist is that the coins which we have follows greedy prinicple i.e when we will sort this coins in increasing order we will not find any two consecutive pair sum for which the third consecutive coin is less
+- e.g : [1, 2, 5, 10, 20] follows greedy principle where as [1, 5, 6, 9, 10] doesn't (here we will use dp approach)
+- In greedy approach, we will set a counter variable to 0 and sort the coins array in decreasing order then we will go to that index for which the current coin amount is less than the target amount
+- We will increament target amount by the coin amount and increment counter
+*/
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int deno[] = { 1, 2, 5, 10, 20, 50, 100, 500, 1000 };
+int n = sizeof(deno) / sizeof(deno[0]);
+
+void findMin(int V)
+{
+	sort(deno, deno + n);
+	vector<int> ans;
+	for (int i = n - 1; i >= 0; i--)
+	{
+		while (V >= deno[i]) 
+		{
+			V -= deno[i];
+			ans.push_back(deno[i]);
+		}
+	}
+
+	// Print result
+	for (int i = 0; i < ans.size(); i++)
+		cout << ans[i] << " ";
+}
+
+int main()
+{
+	int n = 93;
+	cout << "Following is minimal number of change for " << n << ": ";
+	findMin(n);
+	return 0;
+}
+```
+* (Not in List) Coin Change - find the minimum number of coins for getting a target amount
+```
+/* 
+
+T(N) = O(Target * #Coins), S(N) = O(Target) 
+
+Idea
+====
+- Idea is to use Recursion/Dynamic Programming
+- Set a look up table whose size is equal to target + 1
+- Now, for target == 0 we dont need any coins so the answer is 0
+- We will fill minimum amount of coins required for a particular amounts from i = 1 to target
+- We will traverse over all the coins for the given amount and we will update dp[current_amount] = min(1 + dp[current_amount - current_coin], dp[current_amount])
+- We are including dp[current_amount] in the comparision because if we are getting any minimum result for a particular coin, we will save that amount in dp[current_amount] 
+*/
+class Solution {
+public:   
+    int coinChange(vector<int>& coins, int amount) {
+        if(amount == 0) return 0;
+        vector<int> dp(amount + 1, INT_MAX);
+        
+        dp[0] = 0;
+        for(int i = 1; i<=amount; i++)
+            for(auto c : coins) 
+                if((i >= c) and (dp[i-c]) != INT_MAX) dp[i] = min(1 + dp[i-c], dp[i]);
+
+        return (dp[amount] == INT_MAX) ? -1 : dp[amount];
+    }
+};
+```
+* Activity Selection (it is same as N meeting in one room) 
+```
+"""
+T(N) = O(N * logN), S(N) = O(N)
+
+Idea
+====
+- Make a struct(only for C/C++) or class (for OOP languages) for each activity and store them in a array
+- Sort them by the end time and store the first value in a variable let's say current_activity
+- Set a counter to 1 and traverse the array from i : 1 to #activities - 1
+- For each activity check whether they are colliding with current_activity or not
+- If not increment the counter and set the current_activity to the ith activity of array 
+"""
+class Activity:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+class Solution:
+    def activitySelection(self,n,start,end):
+        if(n == 1):
+            return 1
+        activities = []
+        n = len(start)
+        for i in range(n):
+            activities.append(Activity(start[i], end[i]))
+        
+        activities = sorted(activities, key = lambda x : x.end)
+        
+        ans = 1
+        curr_activity = activities[0]
+        for i in range(1, n):
+            if(curr_activity.end < activities[i].start):
+                ans += 1
+                curr_activity = activities[i]
+        
+        
+        return ans
+
+```
 
 ## [Day 9](#calender)
 ```

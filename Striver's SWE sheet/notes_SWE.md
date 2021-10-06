@@ -1832,8 +1832,100 @@ class Solution:
 ```
 
 ## [Day 9](#calender)
+* Subset sums
+![image](https://user-images.githubusercontent.com/56304060/136274762-a9bb5d50-2005-4f8f-87a5-ade5579f6746.png)
+
 ```
-<-Nothing->
+/* 
+
+T(N) = O(2^N), S(N) = O(2^N)
+
+Idea
+====
+- Idea is to use recursion, for each index we will decide whether to pick that element or not
+- PsuedoCode:
+	f(i, A, N, sum, sum_array)
+	{
+		if(i == N)
+			sum_array.add(sum)
+			return;
+		f(i+1, A, N, sum + A[i], sum_array)
+		f(i+1, A, N, sum, sum_array)
+	}
+*/
+class Solution
+{
+public:    
+    void update(int i, vector<int> arr, int N, int sum, vector<int> &ans)
+    {
+        if(i == N)
+        {
+            ans.push_back(sum);
+            return;
+        }
+        
+        update(i+1, arr, N, sum + arr[i], ans);
+        update(i+1, arr, N, sum, ans);
+    }
+    
+    vector<int> subsetSums(vector<int> arr, int N)
+    {
+        // Write Your Code here
+        vector<int> ans;
+        update(0, arr, N, 0, ans);
+        
+        sort(ans.begin(), ans.end());
+        return ans;
+    }
+};
+```
+* Subset-II
+![image](https://user-images.githubusercontent.com/56304060/136285093-8c209b17-2ecb-4902-86ec-b1632cebfcb5.png)
+```
+/*  
+T(N) = O(N * 2^N)
+S(N) = O(2^K)
+Auxillary space = O(N) <- ds vector
+
+Idea
+=====
+- Sort the array
+- Now use recursion, to generate all subsets
+- Idea is to use the above algorithm i.e Subset sum algorithm but here we will ignore the already occured ith index for ith length vector
+- once we do that we can simply perform the pick and not pick recursive call
+
+*/
+class Solution {
+    private:
+        void updateDS(int idx, vector<int> nums, int n, vector<int> ds, vector<vector<int>> &ans)
+        {
+            ans.push_back(ds);
+            for(int i = idx; i<n; i++)
+            {	
+	    	// Here, i != idx basically handles the poping out case
+		// imagine we have [ 1, 2, 2 ] and we have taken i = 1 position 2 in our recursive call.
+		// After the recursive call, we are then poping it out so to avoid using the same 2 at 
+		// the i = 1 position we are using this condition
+		
+                if(i != idx and (nums[i] == nums[i-1])) continue;
+                
+                ds.push_back(nums[i]);
+                updateDS(i + 1, nums, n, ds, ans);
+                ds.pop_back();
+            }
+        }
+    
+    public:
+        vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+            sort(nums.begin(), nums.end());
+            vector<vector<int>> ans;
+            vector<int> tmp;
+            updateDS(0, nums, nums.size(), tmp, ans);
+            
+            return ans;
+        }
+};
+
 ```
 
 ## [Day 10](#calender)

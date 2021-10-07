@@ -2075,7 +2075,7 @@ public:
 
 * kth permutation
 
-![image](https://user-images.githubusercontent.com/56304060/136451344-24044f76-8be2-4865-8acc-97d4e40ef253.png)
+![image](https://user-images.githubusercontent.com/56304060/136451735-a0118d61-0b0f-40a9-a04b-b439d38cd135.png)
 
 ```
 /*

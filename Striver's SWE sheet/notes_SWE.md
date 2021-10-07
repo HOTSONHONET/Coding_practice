@@ -1927,6 +1927,44 @@ class Solution {
 };
 
 ```
+* Combination Sum-I
+```
+/*
+T(N) = O(2^N), S(N) = O(N)
+
+Idea
+====
+- Idea is to use pick and not pick algorithm 
+- Here base conditions we will be if my target < 0 or idx >= len(array) then otherwise if target == 0 then add the current DS/vector inside the ans vector of vector 
+*/
+class Solution {
+    private:
+        void update(int idx, vector<int> candidates, vector<int> ds, vector<vector<int>> &ans, int target)
+        {   
+            if(target < 0 || idx == candidates.size()) return;            
+            if(target == 0)
+            {
+                ans.push_back(ds);
+                return;
+            } 
+            update(idx + 1, candidates, ds, ans, target);
+
+            ds.push_back(candidates[idx]);
+            update(idx, candidates, ds, ans, target - candidates[idx]);
+
+        }
+    
+    
+    public:
+        vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+            vector<vector<int>> ans;
+            vector<int> tmp;
+            update(0, candidates, tmp, ans, target);
+            
+            return ans;
+        }
+};
+```
 
 ## [Day 10](#calender)
 ```

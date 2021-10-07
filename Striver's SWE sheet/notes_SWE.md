@@ -1966,6 +1966,7 @@ class Solution {
 };
 ```
 * Combination Sum - II
+
 ![image](https://user-images.githubusercontent.com/56304060/136407761-9bf80e61-b50b-4d93-9f56-5992982d834b.png)
 
 ```
@@ -2012,6 +2013,7 @@ class Solution {
 };
 ```
 * Palindrome Partitioning
+
 ![image](https://user-images.githubusercontent.com/56304060/136415744-72c23391-88c9-40a4-8fb5-e3f1f04bab3c.png)
 
 ```
@@ -2028,7 +2030,44 @@ Idea
 - We are using the same pick and not pick algorithm
 
 */
-
+class Solution {
+public:
+    
+    bool isPalindrome(string s, int start, int end)
+    {
+        while(start <= end)
+            if(s[start++] != s[end--]) return false;
+        
+        return true;
+    }
+    
+    void update(int idx, vector<vector<string>> &ans, vector<string> ds, string s)
+    {
+        if(idx == s.size())
+        {
+            ans.push_back(ds);
+            return;
+        }
+        
+        for(int i = idx; i<s.size(); i++)
+        {
+            if(isPalindrome(s, idx, i))
+            {
+                ds.push_back(s.substr(idx, i - idx + 1));
+                update(i + 1, ans, ds, s);
+                ds.pop_back();
+            }
+        }
+    }
+    
+    vector<vector<string>> partition(string s) {
+        vector<string> ds;
+        vector<vector<string>> ans;
+        update(0, ans, ds, s);
+        
+        return ans;
+    }
+};
 
 ```
 

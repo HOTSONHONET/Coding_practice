@@ -2071,6 +2071,53 @@ public:
 
 ```
 
+* kth permutation
+
+![image](https://user-images.githubusercontent.com/56304060/136450267-0d3be178-2d63-4702-ad53-63d5f1426554.png)
+
+```
+/*
+T(N) = O(N*N), S(N) = O(N)
+
+Idea:
+====
+- Idea is to apply the "find the index of the word in the dictionary" math problem approach
+- We will first find fact = (N-1)!, this will give us the idea which is our first number
+- We will also decrement k by 1 because we will generating the permutation wrt 0 based indexing
+- then we will delete that number from the array (i.e. [1, 2, ....N]) and we will update the fact and also k
+- fact will be fact/len(array) because array length will be reduced after deletion
+- also after getting the idea about the first element our search area that is k will be reduce
+- we will do this above repeatedly until array is not empty
+
+*/
+class Solution {
+public:
+    string getPermutation(int n, int k) {
+        string ans;
+        vector<int> v(n);
+        int fact = 1;
+        for(int i = 1; i<n; i++)
+        {
+            fact*=i; v[i-1] = i;
+        }
+        
+        v[n-1] = n;
+        k -= 1;
+        while(true)
+        {
+            ans += to_string(v[k/fact]);
+            v.erase(v.begin() + k/fact);
+            
+            if(v.size() == 0) break;
+            k %= fact;
+            fact /= v.size();
+        }
+        
+        return ans;
+    }
+};
+```
+
 
 ## [Day 10](#calender)
 ```

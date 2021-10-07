@@ -1965,6 +1965,73 @@ class Solution {
         }
 };
 ```
+* Combination Sum - II
+![image](https://user-images.githubusercontent.com/56304060/136407761-9bf80e61-b50b-4d93-9f56-5992982d834b.png)
+
+```
+/*
+
+T(N) = O(K * 2^N), S(N) = O(K)
+
+Idea
+====
+- Idea is similar to subset sum
+*/
+
+class Solution {
+    private:
+        void update(int idx, vector<int> candidates, vector<int> ds, vector<vector<int>> &ans, int target)
+        {
+            if(target == 0)
+            {
+                ans.push_back(ds);
+                return;
+            }
+            
+            for(int i = idx; i<candidates.size(); i++)
+            {
+                if(i > idx and (candidates[i] == candidates[i-1])) continue;
+                if(candidates[i] > target) break;
+                
+                ds.push_back(candidates[i]);
+                update(i + 1, candidates, ds, ans, target - candidates[i]);
+                ds.pop_back();
+            }
+        }
+    
+    
+    public:
+        vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+            sort(candidates.begin(), candidates.end());
+            vector<int> ds;
+            vector<vector<int>> ans;
+            update(0, candidates, ds, ans, target);
+            
+            return ans;
+        }
+};
+```
+* Palindrome Partitioning
+![image](https://user-images.githubusercontent.com/56304060/136415744-72c23391-88c9-40a4-8fb5-e3f1f04bab3c.png)
+
+```
+/* 
+
+T(N) = O(K * 2^N), S(N) = O(N)
+Idea
+====
+- We will start at the 0th position and we will check whether we are getting a palindrome substring by doing a partiton or not
+- We will use a loop to do the above step where for every position we will check
+- Now, if we are getting a substring which is a palindrome then we will increase our index (initially it will be at 0), add it to a DS and check again
+- the above step will be done by recursion and the base cases will be when we are getting index >= len(substring) and also when e are not getting a palindrome
+- Now once we reach len(substring) we will backtrack and check for other cases
+- We are using the same pick and not pick algorithm
+
+*/
+
+
+```
+
 
 ## [Day 10](#calender)
 ```

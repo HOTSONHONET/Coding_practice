@@ -2274,7 +2274,144 @@ public:
     }
 };
 ```
-* 
+* Divide integers w/o division operator
+```
+class Solution:
+
+    def divide(self, dividend, divisor):
+        positive = (dividend < 0) is (divisor < 0)
+        dividend, divisor = abs(dividend), abs(divisor)
+        res = 0
+        while dividend >= divisor:
+            temp, i = divisor, 1
+            while dividend >= temp:
+                dividend -= temp
+                res += i
+                i <<= 1
+                temp <<= 1
+        if not positive:
+            res = -res
+        return min(max(-2147483648, res), 2147483647)
+```
+* Power Set
+```
+/*
+T(N) = O(N * 2^N), S(N) = O(N)
+
+Idea
+====
+- Total sets will be 2^N
+- We can represent every set as a binary representation of a number from 0 to 2^N - 1
+- We can generate sets by using the current binary representation and using another loop for traversing the array elements
+- Now for each element we will use its index number to check whether to pick it up or not
+*/
+
+class Solution {
+public:
+    
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector<vector<int>> ans;
+        int n = nums.size();
+        long total_eles = (1<<n);
+        for(int i = 0; i<total_eles; i++)
+        {   
+            vector<int> tmp;
+            for(int j = 0; j<n; j++)
+                if((i&(1<<j)) == 0) tmp.push_back(nums[j]);
+            
+            ans.push_back(tmp);
+        }
+        
+        return ans;
+    }
+};
+```
+* Find the MSB in O(1)
+```
+// CPP program to find MSB number for given n.
+#include <iostream>
+using namespace std;
+
+int setBitNumber(int n)
+{
+	// Below steps set bits after
+	// MSB (including MSB)
+
+	// Suppose n is 273 (binary
+	// is 100010001). It does following
+	// 100010001 | 010001000 = 110011001
+	n |= n >> 1;
+
+	// This makes sure 4 bits
+	// (From MSB and including MSB)
+	// are set. It does following
+	// 110011001 | 001100110 = 111111111
+	n |= n >> 2;
+
+	n |= n >> 4;
+	n |= n >> 8;
+	n |= n >> 16;
+
+	// Increment n by 1 so that
+	// there is only one set bit
+	// which is just before original
+	// MSB. n now becomes 1000000000
+	n = n + 1;
+
+	// Return original MSB after shifting.
+	// n now becomes 100000000
+	return (n >> 1);
+}
+
+// Driver code
+int main()
+{
+	int n = 273;
+	cout << setBitNumber(n);
+	return 0;
+}
+
+```
+* Square of a no. w/o using multiplication and division
+```
+/*
+
+T(N) = O(logN), S(N) = O(1)
+
+Idea
+====
+- If n is even, it can be written as
+	  n = 2*x 
+	  n^2 = (2*x)2 = 4*x^2
+- If n is odd, it can be written as 
+	  n = 2*x + 1
+	  n^2 = (2*x + 1)2 = 4*x^2 + 4*x + 1
+
+*/
+
+// Square of a number using bitwise operators 
+#include<iostream> 
+using namespace std; 
+  
+int square(int n) 
+{ 
+    // Base case 
+    if (n==0) return 0; 
+  
+    // Handle negative number 
+    if (n < 0) n = -n; 
+  
+    // Get floor(n/2) using right shift 
+    int x = n>>1; 
+  
+    // If n is odd 
+    if (n&1) 
+        return ((square(x)<<2) + (x<<2) + 1); 
+    else // If n is even 
+        return (square(x)<<2); 
+} 
+
+```
 
 ## [Day 13](#calender)
 ```

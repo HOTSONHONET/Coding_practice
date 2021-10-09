@@ -2122,8 +2122,129 @@ public:
 
 
 ## [Day 10](#calender)
+* Print all permutation of a sting/array
 ```
-<-Nothing->
+/* 
+T(N) = O(N * N!), S(N) = O(N) 
+
+Idea
+====
+- The idea is similar to pick/not pick algorithm but instead we will swap elements
+*/
+class Solution {    
+    private:
+        void update(int idx, vector<int> nums, vector<vector<int>> &ans)
+        {
+            if(idx == nums.size())
+            {
+                ans.push_back(nums);
+                return;
+            }    
+            for(int i = idx; i<nums.size(); i++)
+            {
+                swap(nums[idx], nums[i]);
+                update(idx + 1, nums, ans);
+            }            
+        }
+    
+    public:
+        vector<vector<int>> permute(vector<int>& nums) {
+            vector<vector<int>> ans;
+
+            update(0, nums, ans);            
+            return ans;
+        }
+};
+```
+* N Queen problem
+
+<table>
+  <tr align="center">
+    <td>Only Direction we have to check</td>
+    <td>Simple check for left</td>
+    <td>Check for lower diagonal</td>
+    <td>Check for upper diagonal</td>
+  </tr>
+  <tr>
+    <td><img src="https://user-images.githubusercontent.com/56304060/136667757-a13e9bee-e829-4be9-9b1d-940a88006320.png" width=500 height=200></td>
+    <td><img src="https://user-images.githubusercontent.com/56304060/136667786-e1dd613f-cab8-4914-8230-83f770db1c54.png" width=500 height=200></td>
+    <td><img src="https://user-images.githubusercontent.com/56304060/136667824-ec419662-9d75-4620-9734-3cf3c5007cbf.png" width=500 height=200></td>
+    <td><img src="https://user-images.githubusercontent.com/56304060/136667836-6d0c5b12-3285-4e10-a755-9fb06774c2a9.png" width=500 height=200></td>
+  </tr>
+ </table>
+
+
+```
+/* 
+
+T(N) = O(N!), S(N) = O(N)
+
+*/
+void printBoard(vector<string> chess)
+{   
+    for(auto i:  chess) cout<<"==";
+    cout<<"\n";
+    for(auto i: chess)
+    {
+        for(auto j : i)
+        {
+            cout<<j<<" ";
+        }
+        cout<<"\n";
+    }
+    
+    for(auto i:  chess) cout<<"==";
+    cout<<"\n";
+}
+
+class Solution {
+    private:        
+        void update(int n, int col, vector<vector<string>> &ans, vector<string> board, vector<int> &left, vector<int> &upperDiagonal, vector<int> &lowerDiagonal)
+        {
+            if(col == n)
+            {
+                // save ans
+                ans.push_back(board);
+                return;
+            }
+            
+            for(int row = 0; row<n; row++)
+            {
+                if(left[row] == 0 and lowerDiagonal[row + col] == 0 and upperDiagonal[n - 1 + col - row] == 0)
+                {   
+                    board[row][col] = 'Q';
+                    left[row] = 1;
+                    lowerDiagonal[row + col] = 1;
+                    upperDiagonal[n-1+col-row] = 1;
+                    
+                    update(n, col + 1, ans, board, left, upperDiagonal, lowerDiagonal);
+                    
+                    left[row] = 0;
+                    lowerDiagonal[row + col] = 0;
+                    upperDiagonal[n-1+col-row] = 0;
+                    board[row][col] = '.';     
+                }
+            }
+            
+            return;
+        }
+    
+    public:
+        vector<vector<string>> solveNQueens(int n) {
+            
+            string s(n, '.');
+            vector<string> board(n, s);            
+            vector<vector<string>> ans;
+            
+            int placed = 0;
+            vector<int> left(n, 0), upperDiagonal(2*n - 1, 0), lowerDiagonal(2*n - 1, 0);
+            update(n, 0, ans, board, left, upperDiagonal, lowerDiagonal);
+            
+            // for(auto i : ans) printBoard(i);
+            
+            return ans;
+        }
+};
 ```
 
 ## [Day 11](#calender)
@@ -2132,9 +2253,28 @@ public:
 ```
 
 ## [Day 12](#calender)
+* Check whether a no is power of 2
 ```
-<-Nothing->
+class Solution {
+public:
+    bool isPowerOfTwo(int n) {
+        return (n<=0) ? 0 : ((n&(n-1)) == 0);   
+    }
+};
 ```
+* Count total sets bits for every number between 0 to N (included)
+```
+class Solution {
+public:
+    vector<int> countBits(int n) {
+        vector<int> dp(n+1, 0);
+        for(int i = 1; i<=n; i++)
+            dp[i] = dp[i&(i-1)] + 1;
+        return dp;
+    }
+};
+```
+* 
 
 ## [Day 13](#calender)
 ```

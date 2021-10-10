@@ -2246,6 +2246,276 @@ class Solution {
         }
 };
 ```
+* Sudoko solver
+```
+class Solution 
+{
+    public:
+    //Function to find a solved Sudoku.
+    bool isValid(vector<vector<char>>& board, int row, int col, int ch, int N){
+        for(int i =0; i<N; i++){
+            if(board[row][i] == ch){
+                return false;
+            }
+            if(board[i][col] == ch){
+                return false;
+            }
+            if(board[N/3*(row/(N/3)) + i/(N/3)][N/3*(col/(N/3)) + i%(N/3)] == ch){
+                return false;
+            }
+        }
+        return true;
+    }
+    bool solve(vector<vector<char>>& board, int i, int j, int N){
+        if(i==N) return true;
+        if(j==N) return solve(board, i+1, 0, N);
+        if(board[i][j] != '.') return solve(board, i, j+1, N);
+        
+        for(char ch = '1'; ch <='9' ; ch++){
+            if(isValid(board,i,j,ch, N)){
+                board[i][j] = ch;
+                if(solve(board, i, j+1, N)){
+                    return true;
+                }
+                board[i][j] = '.';
+            }
+        }
+        return false;
+    }
+    
+    
+    void solveSudoku(vector<vector<char>>& board)  
+    { 
+        solve(board,0,0,board.size());
+    }
+    
+};
+
+```
+* M Coloring problem
+```
+bool isSafe(int v, bool graph[101][101], int V, int color[], int c)
+{
+    for(int i = 0; i < V; i++)
+        if (graph[v][i] && c == color[i]) 
+		return false;             
+    return true;
+}
+
+bool graphColoringUtil(bool graph[101][101], int m, int V, int color[], int v)
+{
+     
+    /* base case: If all vertices are assigned a color then return true */
+    if (v == V)
+        return true;
+ 
+    /* Consider this vertex v and try different colors */
+    for(int c = 1; c <= m; c++)
+    {
+         
+        /* Check if assignment of color c to v is fine*/
+        if (isSafe(v, graph, V, color, c))
+        {
+            color[v] = c;
+ 
+            /* recur to assign colors to rest of the vertices */
+            if (graphColoringUtil(graph, m, V, color, v + 1) == true)
+                return true;
+ 
+            /* If assigning color c doesn't lead to a solution then remove it */
+            color[v] = 0;
+        }
+    }
+ 
+    /* If no color can be assigned to this vertex then return false */
+    return false;
+}
+
+
+bool graphColoring(bool graph[101][101], int m, int V)
+{
+    // your code here
+    // Initialize all color values as 0.
+    // This initialization is needed
+    // correct functioning of isSafe()
+    int color[V];
+    for(int i = 0; i < V; i++)
+        color[i] = 0;
+ 
+    // Call graphColoringUtil() for vertex 0
+    return graphColoringUtil(graph, m, V, color, 0);
+
+}
+```
+* Rat in a Maze
+```
+# Python3 implementation of the above approach
+from typing import List
+
+MAX = 5
+
+# Function returns true if the
+# move taken is valid else
+# it will return false.
+def isSafe(row: int, col: int,
+		m: List[List[int]], n: int,
+		visited: List[List[bool]]) -> bool:
+
+	if (row == -1 or row == n or
+		col == -1 or col == n or
+		visited[row][col] or m[row][col] == 0):
+		return False
+
+	return True
+
+# Function to print all the possible
+# paths from (0, 0) to (n-1, n-1).
+def printPathUtil(row: int, col: int,
+				m: List[List[int]],
+				n: int, path: str,
+				possiblePaths: List[str],
+				visited: List[List[bool]]) -> None:
+
+	# This will check the initial point
+	# (i.e. (0, 0)) to start the paths.
+	if (row == -1 or row == n or
+		col == -1 or col == n or
+		visited[row][col] or m[row][col] == 0):
+		return
+
+	# If reach the last cell (n-1, n-1)
+	# then store the path and return
+	if (row == n - 1 and col == n - 1):
+		possiblePaths.append(path)
+		return
+
+	# Mark the cell as visited
+	visited[row][col] = True
+
+	# Try for all the 4 directions (down, left,
+	# right, up) in the given order to get the
+	# paths in lexicographical order
+
+	# Check if downward move is valid
+	if (isSafe(row + 1, col, m, n, visited)):
+		path += 'D'
+		printPathUtil(row + 1, col, m, n,
+					path, possiblePaths, visited)
+		path = path[:-1]
+
+	# Check if the left move is valid
+	if (isSafe(row, col - 1, m, n, visited)):
+		path += 'L'
+		printPathUtil(row, col - 1, m, n,
+					path, possiblePaths, visited)
+		path = path[:-1]
+
+	# Check if the right move is valid
+	if (isSafe(row, col + 1, m, n, visited)):
+		path += 'R'
+		printPathUtil(row, col + 1, m, n,
+					path, possiblePaths, visited)
+		path = path[:-1]
+
+	# Check if the upper move is valid
+	if (isSafe(row - 1, col, m, n, visited)):
+		path += 'U'
+		printPathUtil(row - 1, col, m, n,
+					path, possiblePaths, visited)
+		path = path[:-1]
+
+	# Mark the cell as unvisited for
+	# other possible paths
+	visited[row][col] = False
+
+# Function to store and print
+# all the valid paths
+def printPath(m: List[List[int]], n: int) -> None:
+
+	# vector to store all the possible paths
+	possiblePaths = []
+	path = ""
+	visited = [[False for _ in range(MAX)]
+					for _ in range(n)]
+					
+	# Call the utility function to
+	# find the valid paths
+	printPathUtil(0, 0, m, n, path,
+				possiblePaths, visited)
+
+	# Print all possible paths
+	for i in range(len(possiblePaths)):
+		print(possiblePaths[i], end = " ")
+
+# Driver code
+if __name__ == "__main__":
+	
+	m = [ [ 1, 0, 0, 0, 0 ],
+		[ 1, 1, 1, 1, 1 ],
+		[ 1, 1, 1, 0, 1 ],
+		[ 0, 0, 0, 0, 1 ],
+		[ 0, 0, 0, 0, 1 ] ]
+	n = len(m)
+	
+	printPath(m, n)
+
+# This code is contributed by sanjeev2552
+
+```
+* Word Break
+```
+class Solution{
+public:
+    
+    unordered_map<string, vector<string>> mp;
+    unordered_set<string> word_dict;
+    
+    vector<string> combine(vector<string> prev, string word)
+    {
+        for(int i=0; i<prev.size(); ++i)
+        {
+            prev[i] += " " + word;
+        }
+        
+        return prev;
+    }
+    
+    
+    vector<string> wordBreakUtil(string s)
+    {
+        if(mp.find(s) != mp.end())
+        {
+            return mp[s];
+        }
+        
+        vector<string> res;
+        if(word_dict.find(s) != word_dict.end()) res.push_back(s);
+        
+        for(int i = 0; i<s.size(); ++i)
+        {
+            string word = s.substr(i);
+            if(word_dict.find(word) != word_dict.end())
+            {
+                string rem = s.substr(0, i);
+                vector<string> prev = combine(wordBreakUtil(rem), word);
+                
+                res.insert(res.end(), prev.begin(), prev.end());
+            }
+        }
+        
+        mp[s] = res;
+        return res;
+    }
+    
+    vector<string> wordBreak(int n, vector<string>& dict, string s)
+    {   
+       mp.clear();
+       word_dict.clear();
+       word_dict.insert(dict.begin(), dict.end());
+       return wordBreakUtil(s);
+    }
+};
+```
 
 ## [Day 11](#calender)
 ```

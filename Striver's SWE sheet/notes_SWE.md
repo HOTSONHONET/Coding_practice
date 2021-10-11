@@ -2518,8 +2518,56 @@ public:
 ```
 
 ## [Day 11](#calender)
+
+* Nth root of a number
 ```
-<-Nothing->
+/*
+
+T(N) = O(logN * logM)
+
+Idea
+====
+- Use BS to search the Nth root
+- Find the Nth power of a number using binary exponention (myPow function in Day-3)
+
+*/
+class Solution{
+    private:
+        double myPow(double x, int n)
+        {
+            long long nn = (n < 0) ? -1*n : n;
+            double ans = 1;
+            while(nn > 0)
+            {
+                if(nn&1)
+                {
+                    ans *= x; nn--;
+                }else{
+                    x *= x; nn/=2;
+                }
+            }
+            
+            return (n < 0) ? (double)(1.0)/(double)(ans) : ans;
+        }
+        
+	public:
+	int NthRoot(int n, int m)
+	{
+	    // Code here.
+	    int l = 1, r = m;
+	    while(l<=r)
+	    {   
+	        int mid = l + (r - l)/2;
+	        double val = myPow(mid, n);
+
+	        if(val == m) return mid;
+	        else if(val > m) r = mid - 1;
+	        else l = mid + 1;
+	    }
+	    
+	    return -1;
+	}  
+};
 ```
 
 ## [Day 12](#calender)

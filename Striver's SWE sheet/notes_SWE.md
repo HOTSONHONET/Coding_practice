@@ -2569,6 +2569,190 @@ class Solution{
 	}  
 };
 ```
+* Mediam matrix
+```
+/*	
+	MAXX = MAX element in matrix; MINN = MIN element in matrix
+	T(N) = O(log(MAX-MIN) * N * log(M))
+Idea
+=====
+- We will find the min and max element in the matrix, the min to max will be our search space
+- Now we will apply binary search to find the median in the search space
+- For each value we will again apply binary search in all rows to find the no of elements which are smaller than the current potential ans (mid from 1st binary search)
+- Idea is that the median will have N*M/2 elements smaller than it
+
+*/
+
+class Solution{   
+    private:
+        int countSmallerElements(vector<vector<int>> matrix, int mid)
+        {
+            int cnt = 0;
+            int n = matrix.size(), m = matrix[0].size();
+            for(int i = 0; i<n; i++)
+            {   
+                int l = 0, r = m-1;
+                while(l<=r)
+                {
+                    int mid_idx = l + (r-l)/2;
+                    if(matrix[i][mid_idx] <= mid) l = mid_idx + 1;
+                    else r = mid_idx - 1;
+                }
+                
+                cnt += l;
+            }
+            
+            return cnt;
+        }
+    
+    public:
+        int median(vector<vector<int>> &matrix, int rows, int cols){
+            int l = INT_MAX, r = INT_MIN;
+            for(int i = 0; i<rows; i++)
+            {
+                l = min(l, matrix[i][0]);
+                r = max(r, matrix[i][cols-1]);
+            }
+            
+            
+            int half_eles = rows*cols/2;
+            while(l<=r)
+            {
+                int mid = l + (r-l)/2;
+                int cnt = countSmallerElements(matrix, mid);
+                // cout<<"cnt: "<<cnt<<", mid: "<<mid<<endl;
+                if(cnt > half_eles) r = mid - 1;
+                else l = mid + 1;
+            }
+            
+            return l;
+        }
+};
+```
+* Find the single element in a sorted array where rest all appear exactly twice
+```
+/*
+
+T(N) = O(logN), S(N) = O(1)
+
+Idea
+====
+- XOR property:
+	=> EvenNo ^ 1 = EvenNo + 1
+	=> OddNo ^ 1 = OddNo - 1
+- We will use this property and binary search to find out whether the current element is appearing twice or not
+- For every index we will check A[mid] == A[mid^1], since A is in sorted order so every twice occuring element will be adjacent
+- Now for every index/mid if we apply this property and shift left pointer and right pointer approrpiately, then our left pointer will be our answer
+- 
+
+*/
+
+class Solution {    
+    public:
+        int singleNonDuplicate(vector<int>& nums) {
+            int l = 0, r = nums.size()-2;
+            while(l<=r)
+            {
+                int mid = l + (r-l)/2;
+                if(nums[mid] == nums[mid^1])
+                    l = mid + 1;
+                else r = mid - 1;
+            }
+            
+            return nums[l];
+        }
+};
+```
+* Search in a rotated array
+```
+T(N) = O(logN), S(N)=  O(1)
+
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        
+        int l = 0, r = nums.size()-1;       
+        
+        while(l <= r)
+        {   
+            int mid = l + (r-l)/2;
+            if(nums[mid] == target) return mid;
+            
+            // Left half is sorted
+            if(nums[l] <= nums[mid])
+            {   
+                // Check if target lies in the interval or not
+                if(target >= nums[l] and target <= nums[mid]) r = mid - 1;
+                else l = mid + 1;
+            }
+            
+            // Right half is sorted
+            else{
+                
+                if(target >= nums[mid] and target <= nums[r]) l = mid + 1;
+                else r = mid - 1;
+            }     
+        }     
+        
+        return -1;
+    }
+};
+```
+
+* Median of 2 Sorted Arrays
+
+
+<table>
+  <tr align="center">
+	<td>Partition Logic</td>
+  	<td>Binary Search Logic</td>
+  </tr>
+  <tr>
+    <td><img src="https://user-images.githubusercontent.com/56304060/136844259-038b1601-9194-4453-9b02-c3ac8d42f7e8.png" width=500 height=200></td>
+    <td><img src="https://user-images.githubusercontent.com/56304060/136844382-2be9f45e-9f87-42ba-bd80-18bf10b0dac9.png" width=500 height=200></td>
+  </tr>
+ </table>
+
+```
+/* T(N) = O(log(min(N, M)), S(N) = O(1) */
+
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        int n = nums1.size(), m = nums2.size();
+        if(n>m) return findMedianSortedArrays(nums2, nums1);
+        
+        int low = 0, high= n;
+        while(low <= high)
+        {
+            int cut1 = low + (high-low)/2;
+            int cut2 = (n + m + 1)/2 - cut1;
+            
+            int l1 = (cut1 == 0) ? INT_MIN : nums1[cut1 - 1];
+            int l2 = (cut2 == 0) ? INT_MIN : nums2[cut2 - 1];
+            
+            int r1 = (cut1 == n) ? INT_MAX : nums1[cut1];
+            int r2 = (cut2 == m) ? INT_MAX : nums2[cut2];
+
+            if(l1 <= r2 and l2<=r1)
+            {
+                if ((n + m)&1)
+                    return max(l1, l2);
+                return (max(l1, l2) + min(r1, r2))/2.0;
+            }
+            
+            // Shifting l1 to the right side
+            else if(l1 > r2) high = cut1 - 1;
+            
+            // Shifting l2 to the right side
+            else low = cut1 + 1;   
+        }
+        
+        return 0.0;
+        
+    }
+};
+```
 
 ## [Day 12](#calender)
 * Check whether a no is power of 2

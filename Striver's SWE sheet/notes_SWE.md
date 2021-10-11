@@ -2753,6 +2753,47 @@ public:
     }
 };
 ```
+* Kth element of two sorted array
+
+```
+/* 
+T(N) = O(logN + logM), S(N) = O(1) 
+
+Idea
+=====
+- We take a mid between [L,R] using the formula mid = (L+R)/2.
+- Check if the middle can be the kth element using upper_bound() function
+- Find the sum of upper_bound() for both the arrays and if the sum is >= K, It’s a possible value of kth element.
+- If sum is >= K then we assign R = mid – 1.
+- Else if sum <k then the current mid is too small and we assign L = mid+1.
+- Repeat from top
+- Return the smallest value found.
+
+*/
+
+class Solution{
+    public:
+    int kthElement(int arr1[], int arr2[], int n, int m, int k)
+    {
+        long long int l = 1, r = 1e10, ans = 1e10;
+        while(l<=r)
+        {
+            long long int mid = l + (r-l)/2;
+            int cnt = upper_bound(arr1,arr1+n, mid) - arr1;
+            cnt += upper_bound(arr2, arr2 + m, mid) - arr2;
+            
+            if(cnt >= k)
+            {
+                ans = min(ans, mid);
+                r = mid - 1;
+            }
+            else l = mid + 1;
+        }
+        
+        return ans;
+    }
+};
+```
 
 ## [Day 12](#calender)
 * Check whether a no is power of 2

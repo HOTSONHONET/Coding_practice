@@ -2794,6 +2794,164 @@ class Solution{
     }
 };
 ```
+* Minimum allocation number of pages
+```
+/* T(N) = O(N * logN), S(N) = O(1) */
+class Solution {
+  public:
+    bool isPossible(int arr[], int n, int m, int curr_min)
+{
+    int studentsRequired = 1;
+    int curr_sum = 0;
+  
+    // iterate over all books
+    for (int i = 0; i < n; i++)
+    {
+        // check if current number of pages are greater than curr_min that means we will get the result after mid no. of pages
+        if (arr[i] > curr_min)
+            return false;
+  
+        // count how many students are required to distribute curr_min pages
+        if (curr_sum + arr[i] > curr_min)
+        {
+            // increment student count
+            studentsRequired++;
+  
+            // update curr_sum
+            curr_sum = arr[i];
+  
+            // if students required becomes greater than given no. of students,return false
+            if (studentsRequired > m)
+                return false;
+        }
+  
+        // else update curr_sum
+        else
+            curr_sum += arr[i];
+    }
+    return true;
+}
+  
+// function to find minimum pages
+int findPages(int arr[], int n, int m)
+{
+    long long sum = 0;
+  
+    // return -1 if no. of books is less than no. of students
+    if (n < m)
+        return -1;
+  
+    // Count total number of pages
+    for (int i = 0; i < n; i++)
+        sum += arr[i];
+  
+    // initialize start as 0 pages and end as
+    // total pages
+    int start = 0, end = sum;
+    int result = INT_MAX;
+  
+    // traverse until start <= end
+    while (start <= end)
+    {
+        // check if it is possible to distribute books by using mid as current minimum
+        int mid = (start + end) / 2;
+        if (isPossible(arr, n, m, mid))
+        {
+            // if yes then find the minimum distribution
+            result = min(result, mid);
+  
+            // as we are finding minimum and books are sorted so reduce end = mid -1 that means
+            end = mid - 1;
+        }
+  
+        else
+            // if not possible means pages should be increased so update start = mid + 1
+            start = mid + 1;
+    }
+  
+    // at-last return minimum no. of  pages
+    return result;
+}
+};
+```
+* Aggressive Cows
+```
+/*
+	T(N) = O(N * log N), S(N) = O(1)
+	Idea
+	=====
+	- Sort the array
+	- Apply binary search to from l = 1 to A[n-1] - A[0] <- max value possible
+	- For every mid value check whether that is a potential answer or not -> linear check
+
+*/
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+void print(vector<int> v)
+{
+    for (auto i : v)
+        cout << i << " ";
+    cout << "\n";
+}
+
+bool isOk(vector<int> v, int c, int d)
+{
+    int lastPlaced = v[0];
+    c--;
+    for (int i = 1; i < v.size(); i++)
+    {
+        if ((v[i] - lastPlaced) >= d)
+        {
+            c--;
+            lastPlaced = v[i];
+        }
+
+        if (c == 0)
+            return true;
+    }
+
+    return false;
+}
+
+int main()
+{
+    int tcs;
+    cin >> tcs;
+    while (tcs--)
+    {
+        int n, c;
+        cin >> n >> c;
+        vector<int> v(n);
+        for (int i = 0; i < n; i++)
+            cin >> v[i];
+
+        sort(v.begin(), v.end());
+        // cout << n << " " << c << endl;
+        // print(v);
+
+        int l = 1, r = v[v.size() - 1] - v[0];
+        int ans = -1;
+        while (l <= r)
+        {
+            int mid = l + (r - l) / 2;
+            // printf("l : %d, r : %d, mid : %d\n", l, r, mid);
+            if (isOk(v, c, mid))
+            {
+                ans = mid;
+                l = mid + 1;
+            }
+            else
+                r = mid - 1;
+        }
+
+        cout << ans << endl;
+    }
+}
+
+```
 
 ## [Day 12](#calender)
 * Check whether a no is power of 2

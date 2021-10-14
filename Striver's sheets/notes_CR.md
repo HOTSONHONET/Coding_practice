@@ -1,4 +1,4 @@
-# CR sheet solution
+# CR sheet solution [👨🏼‍💻](https://github.com/HOTSONHONET/Coding_practice/tree/master/Striver's%20sheets)
 
 ### Binary Search
 * Ternary string
@@ -77,3 +77,89 @@ int Solution::books(vector<int> &A, int B) {
 }
 
 ```
+
+* Mixing Water
+
+*T(N) = O(1), [Reference](https://www.youtube.com/watch?v=-GUstRI69PI)
+```
+#include <bits/stdc++.h>
+using namespace std;
+using namespace std::chrono;
+ 
+typedef long long int ll;
+
+
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int t;
+    cin >> t;
+    while (t--) {
+		double h, c, t;
+		cin >> h >> c >> t;
+		int cups = 1;
+		double dif = abs(h-t);
+		if (abs((h+c)/2-t) < dif) cups = 2, dif = abs((h+c)/2-t);
+	//	cout << dif << " " << cups << "\n";
+		if (2*t != h+c) {
+			double critical = (t-c)/(2*t-h-c);
+			double x1 = ceil(critical), x2 = floor(critical);
+			if (x2 > 1) {
+				double val1 = abs((x2*h+(x2-1)*c)/(2*x2-1) - t);
+			//	cout << val1 << " " << x2 << "\n";
+				if (val1 < dif) cups = 2*x2-1, dif = val1; 
+			}
+			if (x1 > 1) {
+				double val1 = abs((x1*h+(x1-1)*c)/(2*x1-1) - t);
+			//	cout << val1 << " " << x1 << "\n";
+				if (val1 < dif) cups = 2*x1-1, dif = val1; 
+			}
+		}
+		cout << cups << "\n";
+	}
+    
+    
+	return 0;
+}
+```
+
+### Prefix Sum
+
+* Static Range Sum Queries
+
+```
+#include <bits/stdc++.h>
+
+using namespace std;
+
+void solve()
+{
+    int n, q;
+    cin >> n >> q;
+    vector<long long int> v(n + 1, 0);
+    for (int i = 1; i <= n; i++)
+    {
+        long long int tmp;
+        cin >> tmp;
+        v[i] = v[i - 1] + tmp;
+    }
+
+    while (q--)
+    {
+        int a, b;
+        cin >> a >> b;
+        cout << (v[b] - v[a - 1]) << "\n";
+    }
+}
+
+int main()
+{
+    solve();
+}
+
+```
+
+* 

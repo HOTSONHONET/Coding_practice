@@ -8,13 +8,11 @@ void solve()
 {
     int n;
     cin >> n;
-    ll maxx = -1;
     vector<pair<ll, ll>> v(n);
     for (int i = 0; i < n; i++)
     {
         v[i].second = i;
         cin >> v[i].first;
-        maxx = max(maxx, v[i].first);
     }
     sort(v.begin(), v.end());
     vector<pair<ll, ll>> A;

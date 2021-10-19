@@ -162,4 +162,66 @@ int main()
 
 ```
 
-* 
+* KJ street light problem
+
+![image](https://user-images.githubusercontent.com/56304060/137871538-69f509b0-7508-4ec9-b9a5-dfad482170b8.png)
+```
+T(N) = O(N), S(N) = O(N)
+
+Idea
+====
+- Here, we will use Scaline algorithm which is best for solving range queries problems
+- Idea is to initiate a array A with N+1 length and fill it with 0s
+- Then for each incoming range (start, end, val_to_add) , do this
+	A[start] += val_to_add
+	A[end + 1] -= val_to_add
+- After this use another for loop to calculate the prefix sum
+	A[i] += A[i-1] for i = 1 to N
+- Scaline algorithm makes the below code to be executable in O(N) time
+	for i in #queries
+		for j in start:end
+			A[i] += val_to_add
+			
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+int main()
+{
+    int n, p;
+    cin >> n >> p;
+    vector<int> line(p + 1, 0);
+    for (int i = 0; i < n; i++)
+    {
+        int x, r;
+        cin >> x >> r;
+	
+	// Using scaline algorithm
+        line[max(0, x - r)]++;
+        line[min(p, x + r + 1)]--;
+    }
+
+    // Calculating the prefix sum
+    for (int i = 1; i <= p; i++)
+        line[i] += line[i - 1];
+
+    int counter = 0, maxx = 0;
+    for (auto i : line)
+    {
+        if (i != 1)
+            counter++;
+        else
+        {
+            maxx = max(maxx, counter);
+            counter = 0;
+        }
+    }
+    maxx = max(counter, maxx);
+    cout << maxx << "\n";
+    return 0;
+}
+
+```

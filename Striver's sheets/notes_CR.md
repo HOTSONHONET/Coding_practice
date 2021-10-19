@@ -287,7 +287,8 @@ void solve()
     for (int i = 0; i < rows; i++)
         for (int j = 1; j < cols; j++)
             prefixSum[i][j] += prefixSum[i][j - 1];
-
+    
+    //Column wise
     for (int i = 0; i < cols; i++)
         for (int j = 1; j < rows; j++)
             prefixSum[j][i] += prefixSum[j - 1][i];
@@ -301,5 +302,60 @@ void solve()
         }
         cout << "\n";
     }
+}
+```
+
+### Primers/Divisors
+
+* Count the number of primes in a given range
+
+```
+
+/*
+
+T(N) = O(N * log(log(N))), S(N) = O(1e7)
+
+Idea
+=====
+- Use Seive of Erastosthenes algorithm to pre compute numbers that are primes
+- Using a for loop and prefix sum concept calculate the no of primes we can get from o to i for i in range(2 to N)
+- Then, for a given range (l, r) we have to simply perform PrefixPrimeCnter[r] - PrefixPrimeCnter[l-1], this is valid for 0< l <= r < MAXX
+
+*/
+vector<int> seivePrime(int n)
+{
+    vector<int> Primes(n, 1);
+    for (int i = 2; i <= n; i++)
+        if (Primes[i])
+            for (int p = 2 * i; p <= n; p += i)
+                Primes[p] = 0;
+
+    for (int i = 2; i <= n; i++)
+        Primes[i] = Primes[i - 1] + ((Primes[i]) ? 1 : 0);
+
+    return Primes;
+}
+
+int main()
+{
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+
+    const int maxx = 1e7;
+    vector<int> prefixPrimeCnter = seivePrime(maxx + 1);
+
+    int tcs = 0;
+    cin >> tcs;
+
+    for (int tc = 1; tc <= tcs; tc++)
+    {
+        int cnt = 0;
+        int m, n;
+        cin >> m >> n;
+        cout << (prefixPrimeCnter[n] - prefixPrimeCnter[m - 1]) << endl;
+    }
+
+    return 0;
 }
 ```

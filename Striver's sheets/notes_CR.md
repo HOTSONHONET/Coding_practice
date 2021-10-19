@@ -80,8 +80,10 @@ int Solution::books(vector<int> &A, int B) {
 
 * Mixing Water
 
-*T(N) = O(1), [Reference](https://www.youtube.com/watch?v=-GUstRI69PI)
+[Reference](https://www.youtube.com/watch?v=-GUstRI69PI)
+
 ```
+/* T(N) = O(1), S(N) = O(1) */
 #include <bits/stdc++.h>
 using namespace std;
 using namespace std::chrono;
@@ -224,4 +226,80 @@ int main()
     return 0;
 }
 
+```
+* Cherry and Bits (Prefix sum in a matrix)
+
+```
+
+/*
+
+    T(N) = O(N^2), S(N) = O(N^2)
+    Idea
+    =====
+    - Using prefix sum to calculate the no of times we are going to reverse a position M[i][j]
+    - So if a number is reversed even times then we dont need to reverse it
+    - Else it is odd then we are going to reverse it
+    - While doing prefixSum in matrix we preform it in 2-directions
+        => Row wise
+        => Column wise
+*/
+void solve()
+{
+    int rows, cols;
+    cin >> rows >> cols;
+
+    vector<vector<int>> matrix(rows, vector<int>(cols, 0));
+    for (int i = 0; i < rows; i++)
+    {
+        string s;
+        cin >> s;
+        for (int j = 0; j < cols; j++)
+        {
+            matrix[i][j] = s[j] - '0';
+        }
+    }
+
+    vector<vector<int>> prefixSum(rows, vector<int>(cols, 0));
+    int q;
+    cin >> q;
+
+    for (int i = 0; i < q; i++)
+    {
+        int x1, y1, x2, y2;
+        cin >> x1 >> y1 >> x2 >> y2;
+        x1--;
+        x2--;
+        y1--;
+        y2--;
+
+        prefixSum[x1][y1]++;
+        if (x2 + 1 < rows and y2 + 1 < cols)
+            prefixSum[x2 + 1][y2 + 1]++;
+
+        if (x2 + 1 < rows)
+            prefixSum[x2 + 1][y1]--;
+        if (y2 + 1 < cols)
+            prefixSum[x1][y2 + 1]--;
+    }
+    // calculating the prefix sum
+
+    // Row wise
+    for (int i = 0; i < rows; i++)
+        for (int j = 1; j < cols; j++)
+            prefixSum[i][j] += prefixSum[i][j - 1];
+
+    for (int i = 0; i < cols; i++)
+        for (int j = 1; j < rows; j++)
+            prefixSum[j][i] += prefixSum[j - 1][i];
+
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            // Reversing odd no of times while printing simply even no of times
+            cout << ((prefixSum[i][j] & 1) ? !abs(matrix[i][j]) : matrix[i][j]);
+        }
+        cout << "\n";
+    }
+}
 ```

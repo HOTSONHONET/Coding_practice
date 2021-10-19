@@ -483,4 +483,60 @@ int main()
 ```
 T(N) = O(N * log(MAX(ki))
 
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+
+const int MOD = 1e9 + 7;
+
+ll expo(ll base, ll power)
+{
+    ll ans = 1;
+    while (power)
+    {
+        if (power & 1)
+            ans = ans * base % MOD;
+
+        base = base * base % MOD;
+        power >>= 1;
+    }
+
+    return ans;
+}
+
+void solve()
+{
+    int n;
+    cin >> n;
+
+    ll num_divisors_1 = 1, num_divisors_2 = 1;
+    ll divisors_sum = 1;
+    ll product_sum = 1;
+    for (int i = 0; i < n; i++)
+    {
+        ll x, k;
+        cin >> x >> k;
+
+        // Lets compute the # divisors
+        num_divisors_1 = num_divisors_1 * (k + 1) % MOD;
+
+        // Lets compute the sum of divisors
+        divisors_sum = divisors_sum * (expo(x, k + 1) - 1) % MOD * expo(x - 1, MOD - 2) % MOD;
+
+        // Lets compute the product of divisors
+        product_sum = expo(product_sum, k + 1) * expo(expo(x, (k * (k + 1) / 2)), num_divisors_2) % MOD;
+        num_divisors_2 = num_divisors_2 * (k + 1) % (MOD - 1);
+    }
+
+    cout << num_divisors_1 << " " << divisors_sum << " " << product_sum << "\n";
+}
+
+int main()
+{
+    solve();
+}
+
+
 ```

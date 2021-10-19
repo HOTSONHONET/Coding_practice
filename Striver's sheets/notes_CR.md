@@ -462,3 +462,25 @@ int main()
     return 0;
 }
 ```
+
+* Divisor Analysis
+
+*[Reference](https://usaco.guide/problems/cses-2182-divisor-analysis/solution)*
+
+<table>
+  <tr align="center">
+    <td># of divisors</td>
+    <td>Sum of Divisors</td>
+    <td>Product of divisors</td>
+  </tr>
+  <tr>
+    <td><img src="https://user-images.githubusercontent.com/56304060/138002914-8f9caa37-2c99-4e50-b79a-c13c22713f52.png" width=500 height=200></td>
+    <td><img src="https://user-images.githubusercontent.com/56304060/138002838-586c50e8-7d6a-4cf2-99bc-88c7ea3fa0aa.png" width=500 height=200></td>
+    <td><img src="https://user-images.githubusercontent.com/56304060/138002887-facbc41d-ff98-4464-a1d7-9dd8ccd8ddc4.png" width=500 height=200></td>
+  </tr>
+ </table>
+ 
+```
+T(N) = O(N * log(MAX(ki))
+
+```

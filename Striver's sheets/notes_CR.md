@@ -359,3 +359,106 @@ int main()
     return 0;
 }
 ```
+
+* Prime generation
+
+![image](https://user-images.githubusercontent.com/56304060/137966167-1c08f411-8da9-42bb-bf4e-7a33475518d6.png)
+
+
+```
+/*
+
+T(N) = O((N^0.5) * log(log(N^0.5)), N^0.5 because we will be primes upto R^0.5
+S(N) = O(N)
+
+Idea
+====
+- We will be using Seive algorithm in a different way so that we can prime number in a given range
+- Here, we will use segmented Seive algorithm
+- We can't apply simple Seive algorithm because L and R lies between 1 to 10^9, storing that much of numbers will throw MLE
+- But we can use the fact that R-L < 10^5, we can apply segmented seive algorithm we will be storing only R-L integers
+- Steps:
+	=> Store all the marked primes i.e. whose squares are less than R, we will use simple seive algorithm for that 
+	=> Create a dummy array of length R-L+1 and fill it with 1s. This will represent all the numbers between L to R
+	=> Now use the marked primes, and assign zero to all the indices of dummy which are multiple of those primes
+		i.e we will start with the smallest multiple of prime that lies between the range and then we will use the 
+		seive concept of increment i.e we will increase the number by the current prime number
+	=> Now what ever numbers or indices are marked with 1 are our required primes\
+	=> One key thing to catch is that if our l is given as 1 we will shift it 2 so that we can ignore 1 in the start
+
+- for example; l = 1, r = 10
+	=> l = l + 1 i.e l = 2
+	=> marked primes will be :  [2, 3] because 2 and 3 are primes which are less than 10^0.5
+	=> our dummy array will be (initially): [0->1, 1->1, 2->1, 3->1, 4->1, 5->1, 6->1, 7->1, 8->1, 9->1] (index->boot status)
+	=> our final ds will be : [0->1, 1->1, 2->0, 3->1, 4->0, 5->1, 6->0, 7->0, 8->0, 9->0,]
+	=> Now using a for loop from i = l to r, if i-l index in dummy is set to true or not
+	=> Now, as we can see our final output we will be: [1, 2, 3, 5, 7]
+
+*/
+
+
+
+
+vector<int> seivePrime(int n)
+{
+    vector<int> Primes(n + 1, 1);
+    Primes[0] = Primes[1] = 0;
+    for (int i = 2; i * i <= n; i++)
+        if (Primes[i])
+            for (int p = i * i; p <= n; p += i)
+                Primes[p] = 0;
+
+    vector<int> primesList;
+    for (int i = 2; i <= n; i++)
+        if (Primes[i])
+            primesList.push_back(i);
+
+    // cout << "PrimeList: ";
+    // print(primesList);
+    return primesList;
+}
+
+int main()
+{
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    int tcs = 0;
+    cin >> tcs;
+
+    for (int tc = 1; tc <= tcs; tc++)
+    {
+        int l, r;
+        cin >> l >> r;
+
+        // Because 1 is not a prime number
+        if (l == 1)
+            l++;
+
+        // Get the list of primes that will mark [l, r]
+        vector<int> primes = seivePrime(sqrt(r));
+
+        // Create a data structure(array) to store the primes from [l, r]
+        vector<int> ds(r - l + 1, 1);
+
+        // Marking the multiples of primes in the range [l, r]
+        for (auto prime : primes)
+        {
+            int firstMultiple = prime * (l / prime);
+            if (firstMultiple < l)
+                firstMultiple += prime;
+            for (int i = max(firstMultiple, prime * prime); i <= r; i += prime)
+                ds[i - l] = 0;
+        }
+
+        // print the primes
+        for (int i = l; i <= r; i++)
+            if (ds[i - l])
+                cout << i << "\n";
+
+        cout << "\n";
+    }
+
+    return 0;
+}
+```

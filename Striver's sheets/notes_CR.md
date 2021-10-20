@@ -540,3 +540,96 @@ int main()
 
 
 ```
+
+### Divide annd Conquer
+
+* Inversion count
+```
+"""
+T(N) = O(N * log(N)), S(N) = O(N)
+
+Idea
+=====
+- We will use merge sort algorithm to find the num of inversion pairs
+- The motivation behind this is to use the merge function where do this step
+	if( A[i] <= A[j])
+		tmp[k++] = A[i++]
+	else tmp[k++] = A[j]
+- Now in this step, both the left hand array segment and right hand segment will be sorted so for if we found an element (lets say A[j]) in the right side which is
+smaller than some A[i], then it will be smaller than all the elements from A[i to mid - 1] {Here, mid - 1 because, right segment is from mid to right's end}
+- Thus, We can compute the total inversions for that particular number in the right for the merge step, which will be (mid - i) elements, so our modified algorithm will be
+	if( A[i] <= A[j])
+		tmp[k++] = A[i++]
+	else{
+		tmp[k++] = A[j]
+		inv_count = inv_count + (mid - i)
+	}
+
+
+"""
+
+
+def solver(arr, tmp, l, mid, r):
+    i, j, k = (l, mid, l)
+    inv = 0
+    while(i <= mid-1 and j <= r):
+        if(arr[i] <= arr[j]):
+            tmp[k] = arr[i]
+            k += 1
+            i += 1
+        else:
+            tmp[k] = arr[j]
+            j += 1
+            k += 1
+            inv += mid - i
+
+    while(i <= mid-1):
+        tmp[k] = arr[i]
+        i += 1
+        k += 1
+
+    while(j <= r):
+        tmp[k] = arr[j]
+        j += 1
+        k += 1
+
+    for i in range(l, r + 1):
+        arr[i] = tmp[i]
+
+    return inv
+
+
+def caller(arr, tmp, l, r):
+    inv = 0
+    if(r > l):
+        mid = (l + r) >> 1
+        inv += caller(arr, tmp, l, mid)
+        inv += caller(arr, tmp, mid + 1, r)
+
+        inv += solver(arr, tmp, l, mid + 1, r)
+
+    return inv
+
+
+def solve():
+    cleaner = input()
+    n = int(input())
+    arr = []
+    for i in range(n):
+        tmp = int(input())
+        arr.append(tmp)
+
+    tmp_arr = [0]*len(arr)
+    return caller(arr, tmp_arr, 0, len(arr) - 1)
+
+
+if __name__ == "__main__":
+    tcs = int(input())
+    while(tcs > 0):
+        print(solve())
+        tcs -= 1
+
+
+```
+
+

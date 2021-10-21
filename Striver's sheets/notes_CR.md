@@ -631,5 +631,106 @@ if __name__ == "__main__":
 
 
 ```
+* Meet in the middle
+```
+/* 
+
+T(N) = O(N * 2^N/2), S(N) = O(N/2) = O(N)
+
+Idea
+====
+- This algorithm can only be implemented for those values of N which satisfies N/2 < 31, because 2^31 will throw MLE
+- Idea is to divide our task of generating subset sums into 2 parts
+- We will separately find all the subset sums for indices 0 to N/2 and then for N/2 to N. 
+- We will be storing the subset sums in 2 arrays
+- Now we will sort one of the array
+- Then we will try to find (we will use binary search; upper_bound and lower_bound) if we can get any pair between the arrays whose sum is equal to our target
+- examples:
+	A = [1, 2, 3, 2], target = 5
+	l_seg = [1, 2], r_seg = [3, 2]
+	left_subset_sums = [0, 1, 3, 2] (using bit magic algorithm we can find all the subset sum)
+	right_subset_sums = [0, 3, 5, 2]
+	
+	lets sort right_subset_sums = [0, 2, 3, 5]
+	
+	for i in left_subset_sums
+		binarySearch(right_subset_sums, target - i) 
+			ans += number of (i, target - i)
+
+
+*/
+
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+/* Using Meet in the middle alogorithm */
+ 
+#define ll long long
+ 
+vector<ll> giveSum(vector<int> arr)
+{
+    vector<ll> to_return;
+    for (int i = 0; i < (1 << arr.size()); i++)
+    {
+        ll sum = 0;
+        for (int j = 0; j < arr.size(); j++)
+        {
+            if (i & (1 << j))
+                sum += arr[j];
+        }
+        to_return.push_back(sum);
+    }
+ 
+    return to_return;
+}
+ 
+void solve()
+{
+    int n, t;
+    cin >> n >> t;
+ 
+    vector<int> v1, v2;
+    for (int i = 0; i < n; i++)
+    {
+        int tmp;
+        cin >> tmp;
+        (i < n / 2) ? v1.push_back(tmp) : v2.push_back(tmp);
+    }
+ 
+    vector<ll> x = giveSum(v1), y = giveSum(v2);
+ 
+    /*
+ 
+        1 2 3 2
+ 
+        l = {1, 3, 2}
+        r = {3, 5, 2}
+ 
+        l + r = {(3, 2), (2, 3)}
+ 
+        ans = {(5,), (3, 2), (2, 3)}
+ 
+    */
+ 
+    ll ans = 0;
+    sort(y.begin(), y.end());
+ 
+    for (auto i : x)
+    {
+ 
+        int p = upper_bound(y.begin(), y.end(), t - i) - lower_bound(y.begin(), y.end(), t - i);
+        ans += p;
+    }
+ 
+    cout << (ans) << "\n";
+}
+ 
+int main()
+{
+    solve();
+}
+
+```
 
 

@@ -732,5 +732,59 @@ int main()
 }
 
 ```
+* Funny Knapsack
+```
+/*
+
+T(N) = O(N * 2^(N/2), S(N) = O(N)
+
+Idea
+====
+- Apply meet in the middle algorithm
+- the trick here is we only need to find the upperbound for target - i in y, for all i in x
+- so all the elements from 0 to upper_bound we will proper pairs for current i value
+- so we will update ans by upper_bound - y.begin()
+*/
+
+#define ll long long
+vector<ll> giveAllSubsetSum(vector<int> arr)
+{
+
+    vector<ll> to_return;
+    int n = arr.size();
+    for (int i = 0; i < (1 << n); i++)
+    {
+        ll sum = 0;
+        for (int j = 0; j < n; j++)
+            if (i & (1 << j))
+                sum += arr[j];
+
+        to_return.push_back(sum);
+    }
+
+    return to_return;
+}
+
+void solve()
+{
+    unordered_set<int> finder;
+    int n, w;
+    cin >> n >> w;
+    vector<int> v1, v2;
+    for (int i = 0; i < n; i++)
+    {
+        int tmp;
+        cin >> tmp;
+        (i & 1) ? v1.push_back(tmp) : v2.push_back(tmp);
+    }
+    vector<ll> x = giveAllSubsetSum(v1), y = giveAllSubsetSum(v2);
+    sort(y.begin(), y.end());
+    ll ans = 0;
+    for (auto i : x)
+        ans += upper_bound(y.begin(), y.end(), w - i) - y.begin();
+
+    cout << ans;
+}
+```
 
 

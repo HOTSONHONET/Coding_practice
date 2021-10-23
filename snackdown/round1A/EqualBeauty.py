@@ -1,3 +1,24 @@
+"""
+    Code by HOTSON HONET
+     ______________________
+    |					 |
+    |					 |
+    |                    |
+    |                    |
+    |                    |
+    |                    |
+__________________________________
+    |\       /          /
+    | \_____/          /
+    |  \              /
+    |   \            /
+    |    \///////////
+    /\    \/////////
+   /__\    \______/
+
+"""
+
+
 import math
 from heapq import heappush, heappop, heapify
 import random

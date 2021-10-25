@@ -974,7 +974,88 @@ int main()
     solve();
 }
 
+```
+* Manachars Algorithm (longest palindromic substing)
+
+- [Reference](https://www.hackerearth.com/practice/algorithms/string-algorithm/manachars-algorithm/tutorial/)
+```
+/* T(N) = O(N), S(N) = O(N) */
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+#define SIZE 10000000 + 1
+
+ll p[SIZE * 2];
+
+string modifyString(string s)
+{
+    string to_return = "@";
+    for (ll i = 0; i < s.size(); i++)
+        to_return += "#" + s.substr(i, 1);
+
+    to_return += "#$";
+    return to_return;
+}
+
+string manacharsAlgorithm(const string &s)
+{
+    if (s.size() == 0)
+        return "";
+
+    string q = modifyString(s);
+
+    ll c = 0, r = 0;
+
+    for (ll i = 1; i < q.size() - 1; i++)
+    {
+        ll i_ = 2 * c - i;
+        if (r > i)
+            p[i] = min(r - i, p[i_]);
+
+        while (q[i + 1 + p[i]] == q[i - 1 - p[i]])
+            p[i]++;
+
+        if (i + p[i] > r)
+        {
+            c = i;
+            r = i + p[i];
+        }
+    }
+
+    // find the longest palindrome
+    ll maxLength = 0;
+    ll centerIndex = 0;
+
+    for (ll i = 1; i < q.size() - 1; i++)
+        if (p[i] > maxLength)
+        {
+            maxLength = p[i];
+            centerIndex = i;
+        }
+
+    string ans = s.substr((centerIndex - 1 - maxLength) / 2, maxLength);
+    return ans;
+}
+
+void solve()
+{
+    string s;
+    cin >> s;
+    cout << manacharsAlgorithm(s) << "\n";
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+    solve();
+}
 
 
 ```
-

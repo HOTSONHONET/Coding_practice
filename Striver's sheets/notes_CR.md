@@ -787,4 +787,194 @@ void solve()
 }
 ```
 
+### Strings
+
+* Pattern searching algorithm
+
+- Rabin Karp (slow algorithm) - TC = O(N\*M) depends upon the hashValue, SC = O(1)
+- KMP and Z algorithm are the best algorithm - TC = O(N), SC = O(N)
+- References
+	- [Rabin Karp](https://www.programiz.com/dsa/rabin-karp-algorithm)
+	- [KMP algorthim](https://www.geeksforgeeks.org/kmp-algorithm-for-pattern-searching/)
+	- [Z algorithm] -> Competitive programming HandBook
+
+```
+#include <bits/stdc++.h>
+
+using namespace std;
+
+/* Using Meet in the middle alogorithm */
+
+#define ll long long
+
+// KMP algorithm
+vector<int> buildLPS(string pattern)
+{
+    int n = pattern.size();
+    vector<int> lps(n);
+
+    int len = 0, i = 1;
+    lps[0] = 0;
+
+    while (i < n)
+    {
+        if (pattern[i] == pattern[len])
+        {
+            lps[i] = len + 1;
+            len++;
+            i++;
+        }
+        else
+        {
+            if (len != 0)
+                len = lps[len - 1];
+            else
+            {
+                lps[i] = 0;
+                i++;
+            }
+        }
+    }
+
+    return lps;
+}
+
+int kmp(string str, string pattern)
+{
+    int n, m;
+    n = str.size();
+    m = pattern.size();
+
+    vector<int> lps = buildLPS(pattern);
+    int indices = 0;
+    int i = 0, j = 0;
+    while (i < n)
+    {
+        if (str[i] == pattern[j])
+        {
+            i++;
+            j++;
+        }
+        if (j == m)
+        {
+            indices++;
+            j = lps[j - 1];
+        }
+        else if (pattern[j] != str[i] and i < n)
+        {
+            if (j != 0)
+                j = lps[j - 1];
+            else
+                i++;
+        }
+    }
+
+    return indices;
+}
+
+// Z algorithm
+vector<int> buildZArray(string s)
+{
+    int n = s.size();
+    vector<int> z(n);
+    int x = 0, y = 0;
+
+    for (int i = 1; i < n; i++)
+    {
+        z[i] = max(0, min(z[i - x], y - i + 1));
+        while (i + z[i] < n and s[z[i]] == s[i + z[i]])
+        {
+            x = i;
+            y = i + z[i];
+            z[i]++;
+        }
+    }
+
+    return z;
+}
+
+int zAlgotithm(string s, string pattern)
+{
+    string comb = pattern + "$" + s;
+    vector<int> zArray = buildZArray(comb);
+    // for (auto i : zArray)
+    //     cout << i << " ";
+    // cout << "\n";
+    int ans = 0;
+    for (auto u : zArray)
+        if (u == (int)pattern.size())
+            ans++;
+
+    return ans;
+}
+
+// Rabin Karp Alogrithm
+// Slow algorthim : Giving TLE in CSES
+long long rabinKarpAlgorithm(string txt, string pattern)
+{
+    long long n = txt.size(), m = pattern.size();
+    long long i, j, pattern_HASH = 0, string_HASH = 0, h = 1, d = n;
+    /*
+
+    The value of the MOD depends upon the user
+    the more the better we are reducing spurious collision/hit
+    but at the same time we are increasing the data type size
+    requirement.
+
+    */
+    const long long MOD = n + m;
+
+    // The value of h would be "pow(d, M-1)%q"
+    for (i = 0; i < m - 1; i++)
+        h = (h * d) % MOD;
+
+    // Calculating the hash value of the pattern
+    for (i = 0; i < m; i++)
+    {
+        pattern_HASH = (d * pattern_HASH + pattern[i]) % MOD;
+        string_HASH = (d * string_HASH + txt[i]) % MOD;
+    }
+
+    // Finding the match
+    long long cnt = 0;
+    for (long long i = 0; i <= n - m; i++)
+    {
+        if (pattern_HASH == string_HASH)
+        {
+            for (j = 0; j < m; j++)
+                if (txt[i + j] != pattern[j])
+                    break;
+            if (j == m)
+                cnt++;
+        }
+
+        if (i < n - m)
+        {
+            // Updating the string hash vale
+            string_HASH = (d * (string_HASH - txt[i] * h) + txt[i + m]) % MOD;
+
+            if (string_HASH < 0)
+                string_HASH = string_HASH + MOD;
+        }
+    }
+
+    return cnt;
+}
+
+void solve()
+{
+    string str, pattern;
+    cin >> str >> pattern;
+    long long numIndices = rabinKarpAlgorithm(str, pattern);
+    cout << numIndices << "\n";
+}
+
+int main()
+{
+    solve();
+}
+
+
+
+```
 

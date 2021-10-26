@@ -1401,7 +1401,7 @@ int main()
 ```
 /*
 
-T(N) = O(N * logN), S(N) = O(4*N) = O(N)
+T(N) = O(Q * logN), S(N) = O(4*N) = O(N), where Q = No of queries
 Idea
 ====
 - We will contruct segment tree to answer minimum range query
@@ -1484,5 +1484,125 @@ int main()
     solve();
 }
 
+
+```
+
+* Dynamic Range Queries
+
+![image](https://user-images.githubusercontent.com/56304060/138940421-ebd1acae-4b62-47dd-892e-85c27ed160b5.png)
+
+```
+/*
+
+T(N) = O(Q * logN), S(N) = O(N)
+
+Idea
+====
+- Update the value in the array at the given position
+- In the segment will implement an update function that wil update the values of at most logN nodes/array element
+- We will first come to the parent node and we will check whether the current node's range contains the required index number or not
+- If it does we will find the mid value of the range it represents then we will check whether required index lies in the left half or right half
+- Once, we have reached a leaf node then we will update the segment tree idx value with the array's updated value
+- The while returning we will backtrack to the parents value and update its value
+
+*/
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+
+void buildSegTree(vector<ll> &v, vector<ll> &segTree, int idx, int low, int high)
+{
+    if (low == high)
+    {
+        segTree[idx] = v[low];
+        return;
+    }
+
+    ll mid = (low + high) >> 1;
+    buildSegTree(v, segTree, 2 * idx + 1, low, mid);
+    buildSegTree(v, segTree, 2 * idx + 2, mid + 1, high);
+
+    segTree[idx] = min(segTree[2 * idx + 1], segTree[2 * idx + 2]);
+}
+
+void update(vector<ll> &v, vector<ll> &segTree, int idx, int low, int high, int k)
+{
+    if (low == high)
+    {
+        segTree[idx] = v[k];
+        return;
+    }
+
+    ll mid = (low + high) >> 1;
+
+    if (k <= mid)
+        update(v, segTree, 2 * idx + 1, low, mid, k);
+    else
+        update(v, segTree, 2 * idx + 2, mid + 1, high, k);
+
+    segTree[idx] = min(segTree[2 * idx + 1], segTree[2 * idx + 2]);
+}
+
+ll ansQueries(vector<ll> &segTree, int idx, int low, int high, int ql, int qh)
+{
+    // If completely overlapping
+    if (low >= ql and high <= qh)
+        return segTree[idx];
+
+    // If not overlapping at all
+    if (low > qh or high < ql)
+        return INT_MAX;
+
+    // If there is a parital overlap
+    ll mid = (low + high) >> 1;
+    ll left = ansQueries(segTree, 2 * idx + 1, low, mid, ql, qh);
+    ll right = ansQueries(segTree, 2 * idx + 2, mid + 1, high, ql, qh);
+
+    return min(left, right);
+}
+
+void solve()
+{
+
+    ll n, queries;
+    cin >> n >> queries;
+
+    vector<ll> v(n);
+    for (int i = 0; i < n; i++)
+        cin >> v[i];
+    vector<ll> segTree(4 * n);
+    buildSegTree(v, segTree, 0, 0, n - 1);
+
+    while (queries--)
+    {
+        ll k, a, b;
+        cin >> k >> a >> b;
+
+        a--;
+        if (k == 2)
+        {
+            b--;
+            cout << ansQueries(segTree, 0, 0, n - 1, a, b) << "\n";
+        }
+        else
+        {
+            v[a] = b;
+            update(v, segTree, 0, 0, n - 1, a);
+        }
+    }
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+    solve();
+}
 
 ```

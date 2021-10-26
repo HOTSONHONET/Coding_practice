@@ -1288,3 +1288,110 @@ int main()
 }
 
 ```
+
+
+
+### Segment Trees
+
+* Minimum Range Queries
+
+<table>
+  <tr align="center">
+    <td>Tree Look</td>
+    <td>MAX 4N logic</td>
+  </tr>
+  <tr>
+    <td><img src="https://user-images.githubusercontent.com/56304060/138846893-55c3e401-34b9-49ab-9019-64ec5358273f.png" width=500 height=200></td>
+    <td><img src="https://user-images.githubusercontent.com/56304060/138846905-99edfd76-72da-4daa-ae70-98917bda7086.png" width=500 height=200></td>
+  </tr>
+ </table>
+
+
+```
+/*
+
+T(N) = O(N * logN), S(N) = O(4*N) = O(N)
+Idea
+====
+- We will contruct segment tree to answer minimum range query
+- It will have at max 4*N total nodes (mathematically proven)
+- It will have two operation, one is build and another is to answer the query
+- Same logic can be used for answering sum queries and maximum range queries
+
+*/
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+
+void buildSegmentTree(vector<int> &v, vector<int> &segTree, int idx, int low, int high)
+{
+
+    if (low == high)
+    {
+        segTree[idx] = v[low];
+        return;
+    }
+    int mid = (low + high) >> 1;
+    buildSegmentTree(v, segTree, 2 * idx + 1, low, mid);
+    buildSegmentTree(v, segTree, 2 * idx + 2, mid + 1, high);
+
+    // parent storing the minimum of both of its child
+    segTree[idx] = min(segTree[2 * idx + 1], segTree[2 * idx + 2]);
+}
+
+int ansQueries(vector<int> &segTree, int idx, int low, int high, int ql, int qr)
+{
+    // If range query completely lies between current node's range
+    if (low >= ql and high <= qr)
+        return segTree[idx];
+
+    // If the range query doesnot lie between current node's range
+    if (high < ql || low > qr)
+        return INT_MAX;
+
+    // If there is a partial overlap
+    int mid = (low + high) >> 1;
+    int left = ansQueries(segTree, 2 * idx + 1, low, mid, ql, qr);
+    int right = ansQueries(segTree, 2 * idx + 2, mid + 1, high, ql, qr);
+
+    return min(left, right);
+}
+
+void solve()
+{
+    int n, q;
+    cin >> n >> q;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++)
+        cin >> v[i];
+
+    vector<int> segTree(4 * n);
+    buildSegmentTree(v, segTree, 0, 0, n - 1);
+
+    for (int i = 0; i < q; i++)
+    {
+        int ql, qr;
+        cin >> ql >> qr;
+
+        // Answering queries by segement trees
+        ql--;
+        qr--;
+        cout << ansQueries(segTree, 0, 0, n - 1, ql, qr) << "\n";
+    }
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+    solve();
+}
+
+
+```

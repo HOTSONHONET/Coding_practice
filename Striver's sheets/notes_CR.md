@@ -1071,6 +1071,97 @@ int main()
 
 ```
 
+* Good Substrings Codeforces (use of Rabin Karp Hashing tool)
+```
+/*
+
+T(N) = O(N^2), S(N) = O(N)
+
+Idea
+====
+- Use 2 for loops(nested) and traverse through all substrings
+- The idea is take a counter i.e #bad_characters and check whether the #bad_characters are less than equal to k or not
+- If they are exceeding for jth inner loop iteration, then we will ignore all the substrings for from [i to j, j+1, ....n], hence we will break out of the inner loop
+- Otherwise we will use a hash set to store the hash value of the current substring
+- NOTE: By storing only the hash value we are improving over MLE
+- To calculate the hash value we will use Rabin Karp method to calculate the hash value, but the catch is that there are some test which will go wrong we are considering only one prime number to calculate the hash value
+- To deal with that we will use 2 hash values for every substring, and we will store them in the set
+- Finally we only have to return the size of the set
+
+*/
+
+
+#include<bits/stdc++.h>
+
+using namespace std;
+
+#define lli long long int
+
+void solve()
+{
+
+    /*
+    Rabin Karp Hashing Algorithm
+    */
+
+    string s, v;
+    lli k;
+
+    cin >> s >> v >> k;
+
+    lli n = s.size();
+    set<pair<lli, lli>> finder;
+
+    for (int i = 0; i < n; i++)
+    {
+        lli mod = 1e9 + 7;
+        lli hash1 = 0, hash2 = 0;
+        lli prime1 = 31, prime2 = 29;
+        lli pow1 = 1, pow2 = 1;
+        lli badCount = 0;
+        for (int j = i; j < n; j++)
+        {
+
+            badCount += (int)(v[s[j] - 'a'] == '0');
+
+            if (badCount > k)
+                break;
+            hash1 = (hash1 + (s[j] - 'a' + 1) * pow1) % mod;
+            hash2 = (hash2 + (s[j] - 'a' + 1) * pow2) % mod;
+
+            pow1 = (pow1 * prime1) % mod;
+            pow2 = (pow2 * prime2) % mod;
+
+            finder.insert({hash1, hash2});
+        }
+    }
+
+    cout << finder.size() << "\n";
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    cerr.tie(NULL);
+
+    // int tcs = 0;
+    // cin >> tcs;
+    // for (int tc = 1; tc <= tcs; tc++)
+
+    solve();
+    cerr << "Time elapsed: " << 1.0 * clock() / CLOCKS_PER_SEC << " s.\n";
+    return 0;
+}
+
+```
 
 ### Tree
 

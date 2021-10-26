@@ -1205,3 +1205,86 @@ int main()
     solve();
 }
 ```
+
+### Graph
+
+* Djisktra Algorithm
+```
+/*
+T(N) = O(V + E*logV), S(N) = O(N)
+
+Idea to improve time complexity is to use visited array
+
+*/
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+
+void countDistance(ll n, vector<pair<int, int>> adj[], vector<bool> &visited, ll &ans, ll src)
+{
+    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> pq;
+    vector<ll> distance(n, LLONG_MAX);
+
+    pq.push({0, src});
+    distance[src] = 0;
+
+    while (pq.empty() == false)
+    {
+        ll parent = pq.top().second;
+        pq.pop();
+
+        if (visited[parent])
+            continue;
+        visited[parent] = true;
+
+        for (auto child : adj[parent])
+        {
+            ll childNode = child.first, weight = child.second;
+            if (distance[childNode] > distance[parent] + weight)
+            {
+                distance[childNode] = distance[parent] + weight;
+                pq.push({distance[childNode], childNode});
+            }
+        }
+    }
+
+    for (ll i = 0; i < n; i++)
+        cout << distance[i] << " ";
+    cout << "\n";
+}
+
+void solve()
+{
+    ll n, m;
+    cin >> n >> m;
+
+    vector<pair<int, int>> adj[n];
+    for (ll i = 0; i < m; i++)
+    {
+        ll v, u, w;
+        cin >> v >> u >> w;
+        v--;
+        u--;
+
+        adj[v].push_back({u, w});
+    }
+
+    ll ans = LLONG_MAX;
+    vector<bool> visited(n, false);
+    countDistance(n, adj, visited, ans, 0);
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+    solve();
+}
+
+```

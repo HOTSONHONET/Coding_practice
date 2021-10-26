@@ -979,7 +979,18 @@ int main()
 
 - [Reference](https://www.hackerearth.com/practice/algorithms/string-algorithm/manachars-algorithm/tutorial/)
 ```
-/* T(N) = O(N), S(N) = O(N) */
+/* 
+
+T(N) = O(N), S(N) = O(N) 
+
+Idea
+=====
+- Store the tree in the form of a graph i.e. Adjancent list
+- Apply DFS and use an array to store the number of subordinates
+- Idea is to go to the extreme left and right and while go backing or returning keep up the result
+	#Subordinates(Parent) = 1 + #Subordinates(child)
+
+*/
 
 #include <bits/stdc++.h>
 
@@ -1057,5 +1068,67 @@ int main()
     solve();
 }
 
+
+```
+
+
+### Tree
+
+* Find the number of subordinates
+```
+/ * T(N) = O(N), S(N) = O(N) */
+
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ll long long
+ 
+void countSubordinates(vector<vector<int>> &adj, vector<int> &subordinates, int src)
+{
+    if (adj[src].size() == 0)
+        return;
+ 
+    for (auto child : adj[src])
+    {
+        countSubordinates(adj, subordinates, child);
+        subordinates[src] += 1 + subordinates[child];
+    }
+ 
+    // int idx = 0;
+    // for (auto i : subordinates)
+    //     cerr << (idx++) << "->" << i << " ";
+    // cerr << "\n";
+}
+ 
+void solve()
+{
+    int n;
+    cin >> n;
+    vector<vector<int>> adj(n + 1);
+    for (int i = 2; i <= n; i++)
+    {
+        int tmp;
+        cin >> tmp;
+        adj[tmp].push_back(i);
+    }
+ 
+    vector<int> subordinates(n + 1, 0);
+    countSubordinates(adj, subordinates, 1);
+ 
+    for (int i = 1; i <= n; i++)
+        cout << subordinates[i] << " ";
+    cout << "\n";
+}
+ 
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+    solve();
+}
 
 ```

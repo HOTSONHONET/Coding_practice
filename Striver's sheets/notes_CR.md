@@ -791,12 +791,12 @@ void solve()
 
 * Pattern searching algorithm
 
-- Rabin Karp (slow algorithm) - TC = O(N\*M) depends upon the hashValue, SC = O(1)
-- KMP and Z algorithm are the best algorithm - TC = O(N), SC = O(N)
-- References
-	- [Rabin Karp](https://www.programiz.com/dsa/rabin-karp-algorithm)
-	- [KMP algorthim](https://www.geeksforgeeks.org/kmp-algorithm-for-pattern-searching/)
-	- [Z algorithm] -> Competitive programming HandBook
+	- Rabin Karp (slow algorithm) - TC = O(N\*M) depends upon the hashValue, SC = O(1)
+	- KMP and Z algorithm are the best algorithm - TC = O(N), SC = O(N)
+	- References
+		- [Rabin Karp](https://www.programiz.com/dsa/rabin-karp-algorithm)
+		- [KMP algorthim](https://www.geeksforgeeks.org/kmp-algorithm-for-pattern-searching/)
+		- [Z algorithm] -> Competitive programming HandBook
 
 ```
 #include <bits/stdc++.h>
@@ -977,7 +977,7 @@ int main()
 ```
 * Manachars Algorithm (longest palindromic substing)
 
-- [Reference](https://www.hackerearth.com/practice/algorithms/string-algorithm/manachars-algorithm/tutorial/)
+	- [Reference](https://www.hackerearth.com/practice/algorithms/string-algorithm/manachars-algorithm/tutorial/)
 ```
 /* 
 
@@ -1226,8 +1226,14 @@ int main()
 
 * Find the diameter in a graph where every node has at most 2 child
 
-* There can be two cases, we will always store the maximum
-![image](https://user-images.githubusercontent.com/56304060/138809642-1a138f43-fe1c-4f87-8458-595af4aa2c47.png)
+<table>
+  <tr align="center">
+    <td>There can be two cases, we will always store the maximum</td>
+  </tr>
+  <tr>
+    <td><img src="https://user-images.githubusercontent.com/56304060/138809642-1a138f43-fe1c-4f87-8458-595af4aa2c47.png" width=500 height=200></td>
+  </tr>
+ </table>
 
 ```
 /*

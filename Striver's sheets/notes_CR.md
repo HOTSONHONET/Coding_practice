@@ -1255,41 +1255,39 @@ using namespace std;
  
 #define ll long long
  
-void countSubordinates(vector<vector<int>> &adj, vector<int> &subordinates, int src)
+void dfs(vector<int> tree[], vector<int> &depth, int src, int &ans, int p = -1)
 {
-    if (adj[src].size() == 0)
-        return;
- 
-    for (auto child : adj[src])
+    for (int ele : tree[src])
     {
-        countSubordinates(adj, subordinates, child);
-        subordinates[src] += 1 + subordinates[child];
-    }
+        if (ele == p)
+            continue;
  
-    // int idx = 0;
-    // for (auto i : subordinates)
-    //     cerr << (idx++) << "->" << i << " ";
-    // cerr << "\n";
+        dfs(tree, depth, ele, ans, src);
+        ans = max(ans, depth[src] + depth[ele] + 1);
+        depth[src] = max(depth[src], depth[ele] + 1);
+    }
 }
  
 void solve()
 {
     int n;
     cin >> n;
-    vector<vector<int>> adj(n + 1);
-    for (int i = 2; i <= n; i++)
+ 
+    vector<int> tree[n];
+    for (int i = 1; i < n; i++)
     {
-        int tmp;
-        cin >> tmp;
-        adj[tmp].push_back(i);
+        int l, r;
+        cin >> l >> r;
+        l--;
+        r--;
+        tree[l].push_back(r);
+        tree[r].push_back(l);
     }
  
-    vector<int> subordinates(n + 1, 0);
-    countSubordinates(adj, subordinates, 1);
- 
-    for (int i = 1; i <= n; i++)
-        cout << subordinates[i] << " ";
-    cout << "\n";
+    int ans = 0;
+    vector<int> depth(n, 0);
+    dfs(tree, depth, 0, ans, -1);
+    cout << ans << endl;
 }
  
 int main()
@@ -1299,6 +1297,224 @@ int main()
     freopen("error.txt", "w", stderr);
     freopen("output.txt", "w", stdout);
 #endif
+    solve();
+}
+```
+
+* Kth Ancestor of a tree node
+
+	- [Reference](https://leetcode.com/problems/kth-ancestor-of-a-tree-node/discuss/686268/Explanation-with-c%2B%2B-sample-code)
+	- [Video reference](https://www.youtube.com/watch?v=oib-XsjFa-M&t=1s)
+```
+
+/* T(N) = S(N) = O(N * log*N) */
+
+class TreeAncestor {
+    int LOG = 0;
+    vector<vector<int> > P;
+public:
+     // P[i][node] -> [node] 's [2^i]th parent
+    TreeAncestor(int n, vector<int>& parent) {
+        // initialize   
+        while(1<<(LOG++) <=n);
+        
+        P.resize(LOG, vector<int>(parent.size(), -1));
+        
+        // 2^0
+        for(int i = 0; i < parent.size(); i++){
+            P[0][i] = parent[i];
+        }
+        
+        // 2^i
+        for(int i = 1; i < LOG; i++){
+            for(int node = 0; node < parent.size(); node ++){
+                int nodep = P[i-1][node];
+                if(nodep != -1) P[i][node] = P[i-1][nodep];
+            }
+        }
+    }
+    
+    int getKthAncestor(int node, int k) {
+        for(int i = 0; i < LOG; i++){
+            if(k & (1 << i)){
+                node = P[i][node];
+                if(node == -1) return -1;
+            }
+        }
+
+        return node;
+    }
+};
+```
+
+* Find the distance between two nodes
+	- [Reference](https://www.youtube.com/watch?v=dOAxrhAUIhA&t=6s)
+```
+/* T(N) = S(N) = O(N * logN) */
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+/*
+// O(N) solution for LCA -> will give TLE
+int LCA(int a, int b)
+{
+    // if depth of b is leser than a reverse the function arguments and call it
+    if (depth[b] < depth[a])
+        return LCA(b, a);
+
+    // Find the difference between the levels/depths
+    // Update b to its parent value until they are not in the same level
+    int d = depth[b] - depth[a];
+    while (d > 0)
+    {
+        b = parent[b];
+        d--;
+    }
+
+    // Once they are in the same level
+
+    // Check if they are equal
+    if (a == b)
+        return a;
+    // Update both of them to their parent value
+    while (parent[a] != parent[b])
+        a = parent[a], b = parent[b];
+
+    return parent[a];
+}
+
+*/
+
+/*
+
+T(N) = O( N + Q * logN), S(N) = O(N * logN)
+
+Idea
+=====
+- Using binary lifting for finding the LCA
+- Using DFS to calculate the depth of each node
+
+
+*/
+
+const int maxx = 2e5;
+vector<vector<int>> graph(maxx);
+
+// No of bits very essential always choose the optimal value wrt to the contest constraints
+int LOG = 20;
+vector<vector<int>> up(maxx, vector<int>(LOG));
+vector<int> depth(maxx), visited(maxx);
+
+void print(vector<int> v)
+{
+    for (auto i : v)
+        cerr << i << " ";
+    cerr << "\n";
+}
+
+void print(vector<vector<int>> g)
+{
+    for (int i = 0; i < g.size(); i++)
+    {
+        cerr << i << ": ";
+        print(g[i]);
+    }
+}
+
+void dfs(int src)
+{
+
+    for (int child : graph[src])
+    {
+        if (visited[child] == 0)
+        {
+            visited[child] = 1;
+            depth[child] = depth[src] + 1;
+            // cerr << child << "->" << depth[child] << " " << src << "->" << depth[src] << "\n";
+            up[child][0] = src;
+            for (int i = 1; i < LOG; i++)
+                up[child][i] = up[up[child][i - 1]][i - 1];
+            dfs(child);
+        }
+    }
+}
+
+int findLCA(int a, int b)
+{
+    // We want level of b to be always lower or equal to a
+    if (depth[a] > depth[b])
+        return findLCA(b, a);
+
+    int diff = depth[b] - depth[a];
+    for (int i = LOG - 1; i >= 0; i--)
+        if (diff & (1 << i))
+            b = up[b][i];
+
+    if (a == b)
+        return a;
+
+    for (int i = LOG - 1; i >= 0; i--)
+    {
+        if (up[a][i] != up[b][i])
+        {
+            a = up[a][i], b = up[b][i];
+        }
+    }
+    return up[a][0];
+}
+
+void solve()
+{
+    int n, q, a, b;
+    cin >> n >> q;
+    graph = vector<vector<int>>(n);
+    for (int i = 1; i < n; i++)
+    {
+        cin >> a >> b;
+        // if (a > b)
+        //     swap(a, b);
+        a--, b--;
+        graph[a].push_back(b);
+        graph[b].push_back(a);
+    }
+
+    // cerr << "GRAPH\n";
+    // print(graph);
+    depth.resize(n, 0);
+    visited.resize(n, 0);
+
+    visited[0] = 1;
+    dfs(0);
+
+    // cerr << "Depths\n";
+    // for (int i = 0; i < n; i++)
+    //     cerr << i << "->" << depth[i] << "\n";
+
+    while (q--)
+    {
+        cin >> a >> b;
+        a--, b--;
+        int lca = findLCA(a, b);
+        // cerr << a << " " << b << " " << lca << "\n";
+        cout << (depth[a] + depth[b] - 2 * depth[lca]) << "\n";
+    }
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    cerr.tie(NULL);
+
     solve();
 }
 ```

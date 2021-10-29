@@ -1617,6 +1617,148 @@ int main()
 }
 ```
 
+* Labyrithn
+	- [Reference](https://www.youtube.com/watch?v=5pSMCfNR08U)
+```
+#include <bits/stdc++.h>
+
+using namespace std;
+
+/*
+
+T(N) = O(N), S(N) = O(N)
+
+Idea
+=====
+- Simply count the connected components
+- Use bfs to traverse over the graph
+- Now once we reached the 'B' we will trace back the path
+
+*/
+
+const int maxx = 1e3 + 1;
+vector<vector<char>> graph(maxx, vector<char>(maxx));
+vector<vector<char>> directions(maxx, vector<char>(maxx));
+vector<vector<bool>> visited(maxx, vector<bool>(maxx));
+
+// Wrt rows and cols
+vector<int> aMoves = {0, -1, 0, 1};
+vector<int> bMoves = {-1, 0, 1, 0};
+vector<char> directionsName = {'L', 'U', 'R', 'D'};
+vector<char> path;
+
+int n, m;
+
+bool isValid(int x, int y)
+{
+    if (x < 0 || x > n - 1 || y < 0 || y > m - 1)
+        return false;
+
+    if (visited[x][y] || graph[x][y] == '#')
+        return false;
+
+    return true;
+}
+
+bool bfs(int x, int y)
+{
+    queue<pair<int, int>> q;
+    q.push({x, y});
+    visited[x][y] = true;
+
+    while (!q.empty())
+    {
+        int a = q.front().first, b = q.front().second;
+        q.pop();
+
+        if (graph[a][b] == 'B')
+        {
+            while (true)
+            {
+                path.push_back(directions[a][b]);
+
+                // T(N) for this is O(4) ~ O(1)
+                for (int i = 0; i < 4; i++)
+                {
+                    if (directionsName[i] == path.back())
+                    {
+                        // Tracing back the path
+                        a += -1 * aMoves[i];
+                        b += -1 * bMoves[i];
+                    }
+                }
+
+                if (a == x and b == y)
+                    break;
+            }
+
+            return true;
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            int newA = a + aMoves[i];
+            int newB = b + bMoves[i];
+
+            if (isValid(newA, newB))
+            {
+                directions[newA][newB] = directionsName[i];
+                q.push({newA, newB});
+                visited[newA][newB] = true;
+            }
+        }
+    }
+
+    return false;
+}
+
+void solve()
+{
+    cin >> n >> m;
+    int startX, startY;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+        {
+            cin >> graph[i][j];
+            if (graph[i][j] == 'A')
+            {
+                startX = i, startY = j;
+            }
+        }
+    }
+
+    if (bfs(startX, startY))
+    {
+        cout << "YES\n";
+        cout << path.size() << "\n";
+        while (path.size() > 0)
+        {
+            cout << path.back();
+            path.pop_back();
+        }
+    }
+    else
+        cout << "NO\n";
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    cerr.tie(NULL);
+
+    solve();
+}
+```
+
 * Djisktra Algorithm
 ```
 /*

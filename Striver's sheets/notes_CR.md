@@ -1521,6 +1521,102 @@ int main()
 
 ### Graph
 
+* Counting Rooms
+```
+#include <bits/stdc++.h>
+
+using namespace std;
+
+/*
+
+T(N) = O(N), S(N) = O(N)
+
+Idea
+=====
+- Simply count the connected components
+- Use dfs to traverse over the graph
+- Then the nodes which are not traversed in the last dfs calls
+represents a separate component
+
+*/
+
+const int maxx = 1e3 + 1;
+vector<vector<char>> graph(maxx, vector<char>(maxx));
+vector<vector<bool>> visited(maxx, vector<bool>(maxx));
+
+vector<int> xMoves = {-1, 0, 1, 0};
+vector<int> yMoves = {0, -1, 0, 1};
+
+int n, m;
+
+bool isValid(int x, int y)
+{
+    if (x < 0 || x > n - 1 || y < 0 || y > m - 1)
+        return false;
+
+    if (visited[x][y] || graph[x][y] == '#')
+        return false;
+
+    return true;
+}
+
+void dfs(int x, int y)
+{
+    visited[x][y] = true;
+
+    for (int i = 0; i < 4; i++)
+    {
+        int newX = x + xMoves[i];
+        int newY = y + yMoves[i];
+        if (isValid(newX, newY))
+        {
+            dfs(newX, newY);
+        }
+    }
+}
+
+void solve()
+{
+    cin >> n >> m;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+            cin >> graph[i][j];
+    }
+
+    int cnt = 0;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+        {
+            if (graph[i][j] == '.' and visited[i][j] == false)
+            {
+                dfs(i, j);
+                cnt++;
+            }
+        }
+    }
+
+    cout << cnt << "\n";
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    cerr.tie(NULL);
+
+    solve();
+}
+```
+
 * Djisktra Algorithm
 ```
 /*

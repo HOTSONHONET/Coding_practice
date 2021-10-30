@@ -1841,9 +1841,9 @@ int main()
 ```
 
 
-### Disjoint set DS
+### Disjoint Set Union (DSU)
 	
-* Disjoiny set union
+* Disjoint set union
 	- [Reference](https://www.hackerearth.com/practice/data-structures/disjoint-data-strutures/basics-of-disjoint-data-structures/tutorial/)
 ```
 /* T(N) = O(N * logN), S(N) = O(N) */
@@ -1920,7 +1920,104 @@ void solve()
     }
 }
 ```
+* Roads not only in Berland
+	- [Reference](https://www.youtube.com/watch?v=5nfm5__jjN8)
+<table>
+  <tr align="center">
+    <td>Simple Problem Statement</td>
+    <td>Approach</td>
+  </tr>
+  <tr>
+    <td><img src="https://user-images.githubusercontent.com/56304060/139523756-9a0f0e03-ac4f-4d00-8b49-a028743a6347.jpeg" width=500 height=200></td>
+    <td><img src="https://user-images.githubusercontent.com/56304060/139523721-c514b822-2892-4184-a39f-b17b5185d9eb.jpeg" width=500 height=200></td>
+  </tr>
+ </table>
 
+```
+/* T(N) = O(N * logN), S(N) = O(N) */
+const int maxx = 1e3 + 1;
+vector<int> v(maxx), sizes(maxx, 0);
+int n;
+
+int parent(int x)
+{
+    while (x != v[x])
+    {
+        v[x] = v[v[x]];
+        x = v[x];
+    }
+
+    return x;
+}
+
+void makeUnion(int x, int y)
+{
+    x = parent(x);
+    y = parent(y);
+
+    if (sizes[x] < sizes[y])
+    {
+        v[x] = v[y];
+        sizes[y] += sizes[x];
+        sizes[x] = 0;
+    }
+    else
+    {
+        v[y] = v[x];
+        sizes[x] += sizes[y];
+        sizes[y] = 0;
+    }
+}
+
+void initialize(int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        v[i] = i;
+        sizes[i] = 1;
+    }
+}
+
+void solve()
+{
+    cin >> n;
+    initialize(n);
+
+    vector<pair<int, int>> l1, l2;
+    for (int i = 0; i < n - 1; i++)
+    {
+        int x, y;
+        cin >> x >> y;
+        x--, y--;
+        if (parent(x) == parent(y))
+        {
+            l1.push_back({x, y});
+        }
+        else
+            makeUnion(x, y);
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = i + 1; j < n; j++)
+        {
+            if (parent(i) == parent(j))
+            {
+                continue;
+            }
+
+            l2.push_back({i, j});
+            makeUnion(i, j);
+        }
+    }
+
+    cout << l2.size() << "\n";
+    for (int i = 0; i < (int)l2.size(); i++)
+    {
+        cout << l1[i].first + 1 << " " << l1[i].second + 1 << " " << l2[i].first + 1 << " " << l2[i].second + 1 << "\n";
+    }
+}
+```
 
 ### Segment Trees
 

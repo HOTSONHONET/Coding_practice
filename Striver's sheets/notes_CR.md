@@ -1841,6 +1841,86 @@ int main()
 ```
 
 
+### Disjoint set DS
+	
+* Disjoiny set union
+	- [Reference](https://www.hackerearth.com/practice/data-structures/disjoint-data-strutures/basics-of-disjoint-data-structures/tutorial/)
+```
+/* T(N) = O(N * logN), S(N) = O(N) */
+const int maxx = 1e3 + 1;
+vector<int> v(maxx), sizes(maxx, 0);
+int n, m;
+
+int parent(int x)
+{
+    while (x != v[x])
+    {
+        v[x] = v[v[x]];
+        x = v[x];
+    }
+
+    return x;
+}
+
+void makeUnion(int x, int y)
+{
+    x = parent(x);
+    y = parent(y);
+
+    if (sizes[x] < sizes[y])
+    {
+        v[x] = v[y];
+        sizes[y] += sizes[x];
+        sizes[x] = 0;
+    }
+    else
+    {
+        v[y] = v[x];
+        sizes[x] += sizes[y];
+        sizes[y] = 0;
+    }
+}
+
+void initialize(int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        v[i] = i;
+        sizes[i] = 1;
+    }
+}
+
+void solve()
+{
+    cin >> n >> m;
+    initialize(n);
+
+    print(sizes);
+    while (m--)
+    {
+        int x, y;
+        cin >> x >> y;
+        x--, y--;
+        makeUnion(x, y);
+
+        print(sizes);
+        vector<int> tmp;
+        for (int i = 0; i < n; i++)
+        {
+            if (sizes[i] != 0)
+                tmp.push_back(sizes[i]);
+        }
+
+        sort(tmp.begin(), tmp.end());
+        for (auto i : tmp)
+        {
+            cout << i << " ";
+        }
+        cout << "\n";
+    }
+}
+```
+
 
 ### Segment Trees
 

@@ -2019,6 +2019,77 @@ void solve()
 }
 ```
 
+* Colorful arrays
+```
+/* 
+
+T(N) = O(N * logN), S(N) = O(N)
+
+Idea
+====
+- We will use DSU, to make connected components since all given ranges will act as a connected components
+- The trick is to start from the last queries, because the colors will be the final colors for those ranges
+- We start from the "Left" value of the range and find its parent, then we will check whether the parent is less than the "Right" value of the range or not
+- If it does then we will update the color for that parent index, make connection between Parent and Parent + 1 index
+- Then, We will update our parent index to the parent of parent
+- Another trick which we are using is that while merging we are assigning parent to the max value between the two indices
+
+*/
+const int maxx = 3e5;
+int parent[maxx];
+
+int findParent(int x)
+{
+    if (parent[x] == x)
+        return x;
+
+    return parent[x] = findParent(parent[x]);
+}
+
+void merge(int x, int y)
+{
+    x = findParent(x);
+    y = findParent(y);
+
+    parent[x] = parent[y] = max(x, y);
+}
+
+void init()
+{
+    for (int i = 0; i < maxx; i++)
+        parent[i] = i;
+}
+
+void solve()
+{
+    init();
+
+    int n, m;
+    cin >> n >> m;
+
+    vector<int> finalColors(n + 1);
+    vector<int> lefts(m + 1), rights(m + 1), colors(m + 1);
+    for (int i = 1; i <= m; i++)
+    {
+        cin >> lefts[i] >> rights[i] >> colors[i];
+    }
+
+    for (int i = m; i >= 1; i--)
+    {
+        int parentLeft = findParent(lefts[i]);
+        while (parentLeft <= rights[i])
+        {
+            finalColors[parentLeft] = colors[i];
+            merge(parentLeft, parentLeft + 1);
+            parentLeft = findParent(parentLeft);
+        }
+    }
+
+    for (auto i = finalColors.begin() + 1; i != finalColors.end(); i++)
+        cout << *i << "\n";
+}
+```
+
 ### Segment Trees
 
 * Minimum Range Queries

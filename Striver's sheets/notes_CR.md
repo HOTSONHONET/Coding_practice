@@ -1934,6 +1934,26 @@ void solve()
 }
 ```
 
+* Submerge (Articulation Points)
+
+![image](https://user-images.githubusercontent.com/56304060/139537035-0f22f08b-ff6f-44dc-9ef0-ee5923df64e6.png)
+
+
+```
+/*
+
+T(N) = O(N + E), S(N) = O(N)
+
+Idea
+====
+- Critical Nodes/ Articulation Nodes : Those nodes which when removed will break the graph into 2 or more components
+- The idea is same as that of critical bridges but here we are interested in the nodes
+- Also, we have to take special care for the 0th node because it can be an articulation point 
+- Also, here we will check if lowest_insetion_time[ node's neighbour ] >= insertion_time[ node ] => the node is important
+- Also, at the time of backtracking we will check if the parent nodes is critcal or not by checking the #children it has
+*/
+```
+
 ### Disjoint Set Union (DSU)
 	
 * Disjoint set union

@@ -1839,7 +1839,100 @@ int main()
 }
 
 ```
+* Critical Bridges
+	
+	- [Reference](https://www.youtube.com/watch?v=2rjZH0-2lhk&list=PLgUwDviBIf0rGEWe64KWas0Nryn7SCRWw&index=25)
+```
+/* 
+T(N) = O(N + E), S(N) = O(N)
 
+Idea
+====
+- Critical bridge is that edge which when removed will break the graph into  2 or more individual components
+- We will use to arrays to store the insetion time and lowest insetion time possible for each node
+- The idea is that if lowest_insetion_time[ node's neighbour ] > insertion_time[ node ] => the edge joining node and that neighbour is important
+- We will start the DFS the 0th node and mark all the nodes visited along the way
+- Once we are at a node who doesnot have any neighbour or all neighbour are visited then we will update the lowest time of that node and we will backtrack
+
+*/
+vector<pair<int, int>> ans;
+void dfs(int node, int parent, vector<bool> &visited, vector<int> &inTime, vector<int> &lowTime, int &timer, vector<int> graph[])
+{
+    visited[node] = true;
+    lowTime[node] = inTime[node] = timer++;
+
+    for (int adj : graph[node])
+    {
+        if (parent == adj)
+            continue;
+
+        if (visited[adj] == 0)
+        {
+            dfs(adj, node, visited, inTime, lowTime, timer, graph);
+            lowTime[node] = min(lowTime[adj], lowTime[node]);
+
+            if (lowTime[adj] > inTime[node])
+            {
+                if (node < adj)
+                    ans.push_back({node + 1, adj + 1});
+                else
+                    ans.push_back({adj + 1, node + 1});
+            }
+        }
+        else
+        {
+            lowTime[node] = min(inTime[adj], lowTime[node]);
+        }
+    }
+}
+
+void solve()
+{
+    ans.clear();
+    int n, m;
+    cin >> n >> m;
+
+    vector<int> graph[n];
+    while (m--)
+    {
+        int a, b;
+        cin >> a >> b;
+        a--, b--;
+        graph[a].push_back(b);
+        graph[b].push_back(a);
+    }
+
+    // for (int i = 0; i < n; i++)
+    // {
+    //     cerr << i << ": ";
+    //     print(graph[i]);
+    // }
+    vector<bool> visited(n, false);
+    vector<int> inTime(n, 0), lowTime(n, 0);
+    int timer = 0;
+    for (int i = 0; i < n; i++)
+    {
+        if (visited[i] == false)
+        {
+            dfs(i, -1, visited, inTime, lowTime, timer, graph);
+        }
+    }
+
+    if (ans.size() == 0)
+    {
+        cout << "Sin bloqueos\n";
+    }
+    else
+    {
+        sort(ans.begin(), ans.end());
+        cout << ans.size() << "\n";
+        for (auto i : ans)
+        {
+            cout << i.first << " " << i.second << "\n";
+        }
+    }
+}
+```
 
 ### Disjoint Set Union (DSU)
 	

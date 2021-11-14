@@ -787,4 +787,1761 @@ void solve()
 }
 ```
 
+### Strings
 
+* Pattern searching algorithm
+
+	- Rabin Karp (slow algorithm) - TC = O(N\*M) depends upon the hashValue, SC = O(1)
+	- KMP and Z algorithm are the best algorithm - TC = O(N), SC = O(N)
+	- References
+		- [Rabin Karp](https://www.programiz.com/dsa/rabin-karp-algorithm)
+		- [KMP algorthim](https://www.geeksforgeeks.org/kmp-algorithm-for-pattern-searching/)
+		- [Z algorithm] -> Competitive programming HandBook
+
+```
+#include <bits/stdc++.h>
+
+using namespace std;
+
+/* Using Meet in the middle alogorithm */
+
+#define ll long long
+
+// KMP algorithm
+vector<int> buildLPS(string pattern)
+{
+    int n = pattern.size();
+    vector<int> lps(n);
+
+    int len = 0, i = 1;
+    lps[0] = 0;
+
+    while (i < n)
+    {
+        if (pattern[i] == pattern[len])
+        {
+            lps[i] = len + 1;
+            len++;
+            i++;
+        }
+        else
+        {
+            if (len != 0)
+                len = lps[len - 1];
+            else
+            {
+                lps[i] = 0;
+                i++;
+            }
+        }
+    }
+
+    return lps;
+}
+
+int kmp(string str, string pattern)
+{
+    int n, m;
+    n = str.size();
+    m = pattern.size();
+
+    vector<int> lps = buildLPS(pattern);
+    int indices = 0;
+    int i = 0, j = 0;
+    while (i < n)
+    {
+        if (str[i] == pattern[j])
+        {
+            i++;
+            j++;
+        }
+        if (j == m)
+        {
+            indices++;
+            j = lps[j - 1];
+        }
+        else if (pattern[j] != str[i] and i < n)
+        {
+            if (j != 0)
+                j = lps[j - 1];
+            else
+                i++;
+        }
+    }
+
+    return indices;
+}
+
+// Z algorithm
+vector<int> buildZArray(string s)
+{
+    int n = s.size();
+    vector<int> z(n);
+    int x = 0, y = 0;
+
+    for (int i = 1; i < n; i++)
+    {
+        z[i] = max(0, min(z[i - x], y - i + 1));
+        while (i + z[i] < n and s[z[i]] == s[i + z[i]])
+        {
+            x = i;
+            y = i + z[i];
+            z[i]++;
+        }
+    }
+
+    return z;
+}
+
+int zAlgotithm(string s, string pattern)
+{
+    string comb = pattern + "$" + s;
+    vector<int> zArray = buildZArray(comb);
+    // for (auto i : zArray)
+    //     cout << i << " ";
+    // cout << "\n";
+    int ans = 0;
+    for (auto u : zArray)
+        if (u == (int)pattern.size())
+            ans++;
+
+    return ans;
+}
+
+// Rabin Karp Alogrithm
+// Slow algorthim : Giving TLE in CSES
+long long rabinKarpAlgorithm(string txt, string pattern)
+{
+    long long n = txt.size(), m = pattern.size();
+    long long i, j, pattern_HASH = 0, string_HASH = 0, h = 1, d = n;
+    /*
+
+    The value of the MOD depends upon the user
+    the more the better we are reducing spurious collision/hit
+    but at the same time we are increasing the data type size
+    requirement.
+
+    */
+    const long long MOD = n + m;
+
+    // The value of h would be "pow(d, M-1)%q"
+    for (i = 0; i < m - 1; i++)
+        h = (h * d) % MOD;
+
+    // Calculating the hash value of the pattern
+    for (i = 0; i < m; i++)
+    {
+        pattern_HASH = (d * pattern_HASH + pattern[i]) % MOD;
+        string_HASH = (d * string_HASH + txt[i]) % MOD;
+    }
+
+    // Finding the match
+    long long cnt = 0;
+    for (long long i = 0; i <= n - m; i++)
+    {
+        if (pattern_HASH == string_HASH)
+        {
+            for (j = 0; j < m; j++)
+                if (txt[i + j] != pattern[j])
+                    break;
+            if (j == m)
+                cnt++;
+        }
+
+        if (i < n - m)
+        {
+            // Updating the string hash vale
+            string_HASH = (d * (string_HASH - txt[i] * h) + txt[i + m]) % MOD;
+
+            if (string_HASH < 0)
+                string_HASH = string_HASH + MOD;
+        }
+    }
+
+    return cnt;
+}
+
+void solve()
+{
+    string str, pattern;
+    cin >> str >> pattern;
+    long long numIndices = rabinKarpAlgorithm(str, pattern);
+    cout << numIndices << "\n";
+}
+
+int main()
+{
+    solve();
+}
+
+```
+* Manachars Algorithm (longest palindromic substing)
+
+	- [Reference](https://www.hackerearth.com/practice/algorithms/string-algorithm/manachars-algorithm/tutorial/)
+```
+/* 
+
+T(N) = O(N), S(N) = O(N) 
+
+Idea
+=====
+- Store the tree in the form of a graph i.e. Adjancent list
+- Apply DFS and use an array to store the number of subordinates
+- Idea is to go to the extreme left and right and while go backing or returning keep up the result
+	#Subordinates(Parent) = 1 + #Subordinates(child)
+
+*/
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+#define SIZE 10000000 + 1
+
+ll p[SIZE * 2];
+
+string modifyString(string s)
+{
+    string to_return = "@";
+    for (ll i = 0; i < s.size(); i++)
+        to_return += "#" + s.substr(i, 1);
+
+    to_return += "#$";
+    return to_return;
+}
+
+string manacharsAlgorithm(const string &s)
+{
+    if (s.size() == 0)
+        return "";
+
+    string q = modifyString(s);
+
+    ll c = 0, r = 0;
+
+    for (ll i = 1; i < q.size() - 1; i++)
+    {
+        ll i_ = 2 * c - i;
+        if (r > i)
+            p[i] = min(r - i, p[i_]);
+
+        while (q[i + 1 + p[i]] == q[i - 1 - p[i]])
+            p[i]++;
+
+        if (i + p[i] > r)
+        {
+            c = i;
+            r = i + p[i];
+        }
+    }
+
+    // find the longest palindrome
+    ll maxLength = 0;
+    ll centerIndex = 0;
+
+    for (ll i = 1; i < q.size() - 1; i++)
+        if (p[i] > maxLength)
+        {
+            maxLength = p[i];
+            centerIndex = i;
+        }
+
+    string ans = s.substr((centerIndex - 1 - maxLength) / 2, maxLength);
+    return ans;
+}
+
+void solve()
+{
+    string s;
+    cin >> s;
+    cout << manacharsAlgorithm(s) << "\n";
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+    solve();
+}
+
+
+```
+
+* Good Substrings Codeforces (use of Rabin Karp Hashing tool)
+```
+/*
+
+T(N) = O(N^2), S(N) = O(N)
+
+Idea
+====
+- Use 2 for loops(nested) and traverse through all substrings
+- The idea is take a counter i.e #bad_characters and check whether the #bad_characters are less than equal to k or not
+- If they are exceeding for jth inner loop iteration, then we will ignore all the substrings for from [i to j, j+1, ....n], hence we will break out of the inner loop
+- Otherwise we will use a hash set to store the hash value of the current substring
+- NOTE: By storing only the hash value we are improving over MLE
+- To calculate the hash value we will use Rabin Karp method to calculate the hash value, but the catch is that there are some test which will go wrong we are considering only one prime number to calculate the hash value
+- To deal with that we will use 2 hash values for every substring, and we will store them in the set
+- Finally we only have to return the size of the set
+
+*/
+
+
+#include<bits/stdc++.h>
+
+using namespace std;
+
+#define lli long long int
+
+void solve()
+{
+
+    /*
+    Rabin Karp Hashing Algorithm
+    */
+
+    string s, v;
+    lli k;
+
+    cin >> s >> v >> k;
+
+    lli n = s.size();
+    set<pair<lli, lli>> finder;
+
+    for (int i = 0; i < n; i++)
+    {
+        lli mod = 1e9 + 7;
+        lli hash1 = 0, hash2 = 0;
+        lli prime1 = 31, prime2 = 29;
+        lli pow1 = 1, pow2 = 1;
+        lli badCount = 0;
+        for (int j = i; j < n; j++)
+        {
+
+            badCount += (int)(v[s[j] - 'a'] == '0');
+
+            if (badCount > k)
+                break;
+            hash1 = (hash1 + (s[j] - 'a' + 1) * pow1) % mod;
+            hash2 = (hash2 + (s[j] - 'a' + 1) * pow2) % mod;
+
+            pow1 = (pow1 * prime1) % mod;
+            pow2 = (pow2 * prime2) % mod;
+
+            finder.insert({hash1, hash2});
+        }
+    }
+
+    cout << finder.size() << "\n";
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    cerr.tie(NULL);
+
+    // int tcs = 0;
+    // cin >> tcs;
+    // for (int tc = 1; tc <= tcs; tc++)
+
+    solve();
+    cerr << "Time elapsed: " << 1.0 * clock() / CLOCKS_PER_SEC << " s.\n";
+    return 0;
+}
+
+```
+
+### Tree
+
+* Find the number of subordinates
+```
+/ * T(N) = O(N), S(N) = O(N) */
+
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ll long long
+ 
+void countSubordinates(vector<vector<int>> &adj, vector<int> &subordinates, int src)
+{
+    if (adj[src].size() == 0)
+        return;
+ 
+    for (auto child : adj[src])
+    {
+        countSubordinates(adj, subordinates, child);
+        subordinates[src] += 1 + subordinates[child];
+    }
+ 
+    // int idx = 0;
+    // for (auto i : subordinates)
+    //     cerr << (idx++) << "->" << i << " ";
+    // cerr << "\n";
+}
+ 
+void solve()
+{
+    int n;
+    cin >> n;
+    vector<vector<int>> adj(n + 1);
+    for (int i = 2; i <= n; i++)
+    {
+        int tmp;
+        cin >> tmp;
+        adj[tmp].push_back(i);
+    }
+ 
+    vector<int> subordinates(n + 1, 0);
+    countSubordinates(adj, subordinates, 1);
+ 
+    for (int i = 1; i <= n; i++)
+        cout << subordinates[i] << " ";
+    cout << "\n";
+}
+ 
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+    solve();
+}
+
+```
+
+* Find the diameter in a graph where every node has at most 2 child
+
+<table>
+  <tr align="center">
+    <td>There can be two cases, we will always store the maximum</td>
+  </tr>
+  <tr>
+    <td><img src="https://user-images.githubusercontent.com/56304060/138809642-1a138f43-fe1c-4f87-8458-595af4aa2c47.png" width=500 height=200></td>
+  </tr>
+ </table>
+
+```
+/*
+
+T(N) = O(N), S(N) = O(N)
+
+Idea
+====
+- Use a array to store the depth of each node
+- Now, the idea is we have to find the max value of Depth[Parent] + Depth[Child] + 1
+- Use dfs and keep updating Depth[Parent] in each node traversal
+
+
+*/
+
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ll long long
+ 
+void dfs(vector<int> tree[], vector<int> &depth, int src, int &ans, int p = -1)
+{
+    for (int ele : tree[src])
+    {
+        if (ele == p)
+            continue;
+ 
+        dfs(tree, depth, ele, ans, src);
+        ans = max(ans, depth[src] + depth[ele] + 1);
+        depth[src] = max(depth[src], depth[ele] + 1);
+    }
+}
+ 
+void solve()
+{
+    int n;
+    cin >> n;
+ 
+    vector<int> tree[n];
+    for (int i = 1; i < n; i++)
+    {
+        int l, r;
+        cin >> l >> r;
+        l--;
+        r--;
+        tree[l].push_back(r);
+        tree[r].push_back(l);
+    }
+ 
+    int ans = 0;
+    vector<int> depth(n, 0);
+    dfs(tree, depth, 0, ans, -1);
+    cout << ans << endl;
+}
+ 
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+    solve();
+}
+```
+
+* Kth Ancestor of a tree node
+
+	- [Reference](https://leetcode.com/problems/kth-ancestor-of-a-tree-node/discuss/686268/Explanation-with-c%2B%2B-sample-code)
+	- [Video reference](https://www.youtube.com/watch?v=oib-XsjFa-M&t=1s)
+```
+
+/* T(N) = S(N) = O(N * log*N) */
+
+class TreeAncestor {
+    int LOG = 0;
+    vector<vector<int> > P;
+public:
+     // P[i][node] -> [node] 's [2^i]th parent
+    TreeAncestor(int n, vector<int>& parent) {
+        // initialize   
+        while(1<<(LOG++) <=n);
+        
+        P.resize(LOG, vector<int>(parent.size(), -1));
+        
+        // 2^0
+        for(int i = 0; i < parent.size(); i++){
+            P[0][i] = parent[i];
+        }
+        
+        // 2^i
+        for(int i = 1; i < LOG; i++){
+            for(int node = 0; node < parent.size(); node ++){
+                int nodep = P[i-1][node];
+                if(nodep != -1) P[i][node] = P[i-1][nodep];
+            }
+        }
+    }
+    
+    int getKthAncestor(int node, int k) {
+        for(int i = 0; i < LOG; i++){
+            if(k & (1 << i)){
+                node = P[i][node];
+                if(node == -1) return -1;
+            }
+        }
+
+        return node;
+    }
+};
+```
+
+* Find the distance between two nodes
+	- [Reference](https://www.youtube.com/watch?v=dOAxrhAUIhA&t=6s)
+```
+/* T(N) = S(N) = O(N * logN) */
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+/*
+// O(N) solution for LCA -> will give TLE
+int LCA(int a, int b)
+{
+    // if depth of b is leser than a reverse the function arguments and call it
+    if (depth[b] < depth[a])
+        return LCA(b, a);
+
+    // Find the difference between the levels/depths
+    // Update b to its parent value until they are not in the same level
+    int d = depth[b] - depth[a];
+    while (d > 0)
+    {
+        b = parent[b];
+        d--;
+    }
+
+    // Once they are in the same level
+
+    // Check if they are equal
+    if (a == b)
+        return a;
+    // Update both of them to their parent value
+    while (parent[a] != parent[b])
+        a = parent[a], b = parent[b];
+
+    return parent[a];
+}
+
+*/
+
+/*
+
+T(N) = O( N + Q * logN), S(N) = O(N * logN)
+
+Idea
+=====
+- Using binary lifting for finding the LCA
+- Using DFS to calculate the depth of each node
+
+
+*/
+
+const int maxx = 2e5;
+vector<vector<int>> graph(maxx);
+
+// No of bits very essential always choose the optimal value wrt to the contest constraints
+int LOG = 20;
+vector<vector<int>> up(maxx, vector<int>(LOG));
+vector<int> depth(maxx), visited(maxx);
+
+void print(vector<int> v)
+{
+    for (auto i : v)
+        cerr << i << " ";
+    cerr << "\n";
+}
+
+void print(vector<vector<int>> g)
+{
+    for (int i = 0; i < g.size(); i++)
+    {
+        cerr << i << ": ";
+        print(g[i]);
+    }
+}
+
+void dfs(int src)
+{
+
+    for (int child : graph[src])
+    {
+        if (visited[child] == 0)
+        {
+            visited[child] = 1;
+            depth[child] = depth[src] + 1;
+            // cerr << child << "->" << depth[child] << " " << src << "->" << depth[src] << "\n";
+            up[child][0] = src;
+            for (int i = 1; i < LOG; i++)
+                up[child][i] = up[up[child][i - 1]][i - 1];
+            dfs(child);
+        }
+    }
+}
+
+int findLCA(int a, int b)
+{
+    // We want level of b to be always lower or equal to a
+    if (depth[a] > depth[b])
+        return findLCA(b, a);
+
+    int diff = depth[b] - depth[a];
+    for (int i = LOG - 1; i >= 0; i--)
+        if (diff & (1 << i))
+            b = up[b][i];
+
+    if (a == b)
+        return a;
+
+    for (int i = LOG - 1; i >= 0; i--)
+    {
+        if (up[a][i] != up[b][i])
+        {
+            a = up[a][i], b = up[b][i];
+        }
+    }
+    return up[a][0];
+}
+
+void solve()
+{
+    int n, q, a, b;
+    cin >> n >> q;
+    graph = vector<vector<int>>(n);
+    for (int i = 1; i < n; i++)
+    {
+        cin >> a >> b;
+        // if (a > b)
+        //     swap(a, b);
+        a--, b--;
+        graph[a].push_back(b);
+        graph[b].push_back(a);
+    }
+
+    // cerr << "GRAPH\n";
+    // print(graph);
+    depth.resize(n, 0);
+    visited.resize(n, 0);
+
+    visited[0] = 1;
+    dfs(0);
+
+    // cerr << "Depths\n";
+    // for (int i = 0; i < n; i++)
+    //     cerr << i << "->" << depth[i] << "\n";
+
+    while (q--)
+    {
+        cin >> a >> b;
+        a--, b--;
+        int lca = findLCA(a, b);
+        // cerr << a << " " << b << " " << lca << "\n";
+        cout << (depth[a] + depth[b] - 2 * depth[lca]) << "\n";
+    }
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    cerr.tie(NULL);
+
+    solve();
+}
+```
+
+### Graph
+
+* Counting Rooms
+```
+#include <bits/stdc++.h>
+
+using namespace std;
+
+/*
+
+T(N) = O(N), S(N) = O(N)
+
+Idea
+=====
+- Simply count the connected components
+- Use dfs to traverse over the graph
+- Then the nodes which are not traversed in the last dfs calls
+represents a separate component
+
+*/
+
+const int maxx = 1e3 + 1;
+vector<vector<char>> graph(maxx, vector<char>(maxx));
+vector<vector<bool>> visited(maxx, vector<bool>(maxx));
+
+vector<int> xMoves = {-1, 0, 1, 0};
+vector<int> yMoves = {0, -1, 0, 1};
+
+int n, m;
+
+bool isValid(int x, int y)
+{
+    if (x < 0 || x > n - 1 || y < 0 || y > m - 1)
+        return false;
+
+    if (visited[x][y] || graph[x][y] == '#')
+        return false;
+
+    return true;
+}
+
+void dfs(int x, int y)
+{
+    visited[x][y] = true;
+
+    for (int i = 0; i < 4; i++)
+    {
+        int newX = x + xMoves[i];
+        int newY = y + yMoves[i];
+        if (isValid(newX, newY))
+        {
+            dfs(newX, newY);
+        }
+    }
+}
+
+void solve()
+{
+    cin >> n >> m;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+            cin >> graph[i][j];
+    }
+
+    int cnt = 0;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+        {
+            if (graph[i][j] == '.' and visited[i][j] == false)
+            {
+                dfs(i, j);
+                cnt++;
+            }
+        }
+    }
+
+    cout << cnt << "\n";
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    cerr.tie(NULL);
+
+    solve();
+}
+```
+
+* Labyrithn
+	- [Reference](https://www.youtube.com/watch?v=5pSMCfNR08U)
+```
+#include <bits/stdc++.h>
+
+using namespace std;
+
+/*
+
+T(N) = O(N), S(N) = O(N)
+
+Idea
+=====
+- Simply count the connected components
+- Use bfs to traverse over the graph
+- Now once we reached the 'B' we will trace back the path
+
+*/
+
+const int maxx = 1e3 + 1;
+vector<vector<char>> graph(maxx, vector<char>(maxx));
+vector<vector<char>> directions(maxx, vector<char>(maxx));
+vector<vector<bool>> visited(maxx, vector<bool>(maxx));
+
+// Wrt rows and cols
+vector<int> aMoves = {0, -1, 0, 1};
+vector<int> bMoves = {-1, 0, 1, 0};
+vector<char> directionsName = {'L', 'U', 'R', 'D'};
+vector<char> path;
+
+int n, m;
+
+bool isValid(int x, int y)
+{
+    if (x < 0 || x > n - 1 || y < 0 || y > m - 1)
+        return false;
+
+    if (visited[x][y] || graph[x][y] == '#')
+        return false;
+
+    return true;
+}
+
+bool bfs(int x, int y)
+{
+    queue<pair<int, int>> q;
+    q.push({x, y});
+    visited[x][y] = true;
+
+    while (!q.empty())
+    {
+        int a = q.front().first, b = q.front().second;
+        q.pop();
+
+        if (graph[a][b] == 'B')
+        {
+            while (true)
+            {
+                path.push_back(directions[a][b]);
+
+                // T(N) for this is O(4) ~ O(1)
+                for (int i = 0; i < 4; i++)
+                {
+                    if (directionsName[i] == path.back())
+                    {
+                        // Tracing back the path
+                        a += -1 * aMoves[i];
+                        b += -1 * bMoves[i];
+                    }
+                }
+
+                if (a == x and b == y)
+                    break;
+            }
+
+            return true;
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            int newA = a + aMoves[i];
+            int newB = b + bMoves[i];
+
+            if (isValid(newA, newB))
+            {
+                directions[newA][newB] = directionsName[i];
+                q.push({newA, newB});
+                visited[newA][newB] = true;
+            }
+        }
+    }
+
+    return false;
+}
+
+void solve()
+{
+    cin >> n >> m;
+    int startX, startY;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+        {
+            cin >> graph[i][j];
+            if (graph[i][j] == 'A')
+            {
+                startX = i, startY = j;
+            }
+        }
+    }
+
+    if (bfs(startX, startY))
+    {
+        cout << "YES\n";
+        cout << path.size() << "\n";
+        while (path.size() > 0)
+        {
+            cout << path.back();
+            path.pop_back();
+        }
+    }
+    else
+        cout << "NO\n";
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    cerr.tie(NULL);
+
+    solve();
+}
+```
+
+* Djisktra Algorithm
+```
+/*
+T(N) = O(V + E*logV), S(N) = O(N)
+
+Idea to improve time complexity is to use visited array
+
+*/
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+
+void countDistance(ll n, vector<pair<int, int>> adj[], vector<bool> &visited, ll &ans, ll src)
+{
+    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> pq;
+    vector<ll> distance(n, LLONG_MAX);
+
+    pq.push({0, src});
+    distance[src] = 0;
+
+    while (pq.empty() == false)
+    {
+        ll parent = pq.top().second;
+        pq.pop();
+
+        if (visited[parent])
+            continue;
+        visited[parent] = true;
+
+        for (auto child : adj[parent])
+        {
+            ll childNode = child.first, weight = child.second;
+            if (distance[childNode] > distance[parent] + weight)
+            {
+                distance[childNode] = distance[parent] + weight;
+                pq.push({distance[childNode], childNode});
+            }
+        }
+    }
+
+    for (ll i = 0; i < n; i++)
+        cout << distance[i] << " ";
+    cout << "\n";
+}
+
+void solve()
+{
+    ll n, m;
+    cin >> n >> m;
+
+    vector<pair<int, int>> adj[n];
+    for (ll i = 0; i < m; i++)
+    {
+        ll v, u, w;
+        cin >> v >> u >> w;
+        v--;
+        u--;
+
+        adj[v].push_back({u, w});
+    }
+
+    ll ans = LLONG_MAX;
+    vector<bool> visited(n, false);
+    countDistance(n, adj, visited, ans, 0);
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+    solve();
+}
+
+```
+* Critical Bridges
+	
+	- [Reference](https://www.youtube.com/watch?v=2rjZH0-2lhk&list=PLgUwDviBIf0rGEWe64KWas0Nryn7SCRWw&index=25)
+```
+/* 
+T(N) = O(N + E), S(N) = O(N)
+
+Idea
+====
+- Critical bridge is that edge which when removed will break the graph into  2 or more individual components
+- We will use to arrays to store the insetion time and lowest insetion time possible for each node
+- The idea is that if lowest_insetion_time[ node's neighbour ] > insertion_time[ node ] => the edge joining node and that neighbour is important
+- We will start the DFS the 0th node and mark all the nodes visited along the way
+- Once we are at a node who doesnot have any neighbour or all neighbour are visited then we will update the lowest time of that node and we will backtrack
+
+*/
+vector<pair<int, int>> ans;
+void dfs(int node, int parent, vector<bool> &visited, vector<int> &inTime, vector<int> &lowTime, int &timer, vector<int> graph[])
+{
+    visited[node] = true;
+    lowTime[node] = inTime[node] = timer++;
+
+    for (int adj : graph[node])
+    {
+        if (parent == adj)
+            continue;
+
+        if (visited[adj] == 0)
+        {
+            dfs(adj, node, visited, inTime, lowTime, timer, graph);
+            lowTime[node] = min(lowTime[adj], lowTime[node]);
+
+            if (lowTime[adj] > inTime[node])
+            {
+                if (node < adj)
+                    ans.push_back({node + 1, adj + 1});
+                else
+                    ans.push_back({adj + 1, node + 1});
+            }
+        }
+        else
+        {
+            lowTime[node] = min(inTime[adj], lowTime[node]);
+        }
+    }
+}
+
+void solve()
+{
+    ans.clear();
+    int n, m;
+    cin >> n >> m;
+
+    vector<int> graph[n];
+    while (m--)
+    {
+        int a, b;
+        cin >> a >> b;
+        a--, b--;
+        graph[a].push_back(b);
+        graph[b].push_back(a);
+    }
+
+    // for (int i = 0; i < n; i++)
+    // {
+    //     cerr << i << ": ";
+    //     print(graph[i]);
+    // }
+    vector<bool> visited(n, false);
+    vector<int> inTime(n, 0), lowTime(n, 0);
+    int timer = 0;
+    for (int i = 0; i < n; i++)
+    {
+        if (visited[i] == false)
+        {
+            dfs(i, -1, visited, inTime, lowTime, timer, graph);
+        }
+    }
+
+    if (ans.size() == 0)
+    {
+        cout << "Sin bloqueos\n";
+    }
+    else
+    {
+        sort(ans.begin(), ans.end());
+        cout << ans.size() << "\n";
+        for (auto i : ans)
+        {
+            cout << i.first << " " << i.second << "\n";
+        }
+    }
+}
+```
+
+* Submerge (Articulation Points)
+
+![image](https://user-images.githubusercontent.com/56304060/139537035-0f22f08b-ff6f-44dc-9ef0-ee5923df64e6.png)
+
+
+```
+/*
+
+T(N) = O(N + E), S(N) = O(N)
+
+Idea
+====
+- Critical Nodes/ Articulation Nodes : Those nodes which when removed will break the graph into 2 or more components
+- The idea is same as that of critical bridges but here we are interested in the nodes
+- Also, we have to take special care for the 0th node because it can be an articulation point 
+- Also, here we will check if lowest_insetion_time[ node's neighbour ] >= insertion_time[ node ] => the node is important
+- Also, at the time of backtracking we will check if the parent nodes is critcal or not by checking the #children it has
+*/
+```
+
+### Disjoint Set Union (DSU)
+	
+* Disjoint set union
+	- [Reference](https://www.hackerearth.com/practice/data-structures/disjoint-data-strutures/basics-of-disjoint-data-structures/tutorial/)
+```
+/* T(N) = O(N * logN), S(N) = O(N) */
+const int maxx = 1e3 + 1;
+vector<int> v(maxx), sizes(maxx, 0);
+int n, m;
+
+int parent(int x)
+{
+    while (x != v[x])
+    {
+        v[x] = v[v[x]];
+        x = v[x];
+    }
+
+    return x;
+}
+
+void makeUnion(int x, int y)
+{
+    x = parent(x);
+    y = parent(y);
+
+    if (sizes[x] < sizes[y])
+    {
+        v[x] = v[y];
+        sizes[y] += sizes[x];
+        sizes[x] = 0;
+    }
+    else
+    {
+        v[y] = v[x];
+        sizes[x] += sizes[y];
+        sizes[y] = 0;
+    }
+}
+
+void initialize(int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        v[i] = i;
+        sizes[i] = 1;
+    }
+}
+
+void solve()
+{
+    cin >> n >> m;
+    initialize(n);
+
+    print(sizes);
+    while (m--)
+    {
+        int x, y;
+        cin >> x >> y;
+        x--, y--;
+        makeUnion(x, y);
+
+        print(sizes);
+        vector<int> tmp;
+        for (int i = 0; i < n; i++)
+        {
+            if (sizes[i] != 0)
+                tmp.push_back(sizes[i]);
+        }
+
+        sort(tmp.begin(), tmp.end());
+        for (auto i : tmp)
+        {
+            cout << i << " ";
+        }
+        cout << "\n";
+    }
+}
+```
+* Roads not only in Berland
+	- [Reference](https://www.youtube.com/watch?v=5nfm5__jjN8)
+<table>
+  <tr align="center">
+    <td>Simple Problem Statement</td>
+    <td>Approach</td>
+  </tr>
+  <tr>
+    <td><img src="https://user-images.githubusercontent.com/56304060/139523756-9a0f0e03-ac4f-4d00-8b49-a028743a6347.jpeg" width=500 height=200></td>
+    <td><img src="https://user-images.githubusercontent.com/56304060/139523721-c514b822-2892-4184-a39f-b17b5185d9eb.jpeg" width=500 height=200></td>
+  </tr>
+ </table>
+
+```
+/* T(N) = O(N * logN), S(N) = O(N) */
+const int maxx = 1e3 + 1;
+vector<int> v(maxx), sizes(maxx, 0);
+int n;
+
+int parent(int x)
+{
+    while (x != v[x])
+    {
+        v[x] = v[v[x]];
+        x = v[x];
+    }
+
+    return x;
+}
+
+void makeUnion(int x, int y)
+{
+    x = parent(x);
+    y = parent(y);
+
+    if (sizes[x] < sizes[y])
+    {
+        v[x] = v[y];
+        sizes[y] += sizes[x];
+        sizes[x] = 0;
+    }
+    else
+    {
+        v[y] = v[x];
+        sizes[x] += sizes[y];
+        sizes[y] = 0;
+    }
+}
+
+void initialize(int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        v[i] = i;
+        sizes[i] = 1;
+    }
+}
+
+void solve()
+{
+    cin >> n;
+    initialize(n);
+
+    vector<pair<int, int>> l1, l2;
+    for (int i = 0; i < n - 1; i++)
+    {
+        int x, y;
+        cin >> x >> y;
+        x--, y--;
+        if (parent(x) == parent(y))
+        {
+            l1.push_back({x, y});
+        }
+        else
+            makeUnion(x, y);
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = i + 1; j < n; j++)
+        {
+            if (parent(i) == parent(j))
+            {
+                continue;
+            }
+
+            l2.push_back({i, j});
+            makeUnion(i, j);
+        }
+    }
+
+    cout << l2.size() << "\n";
+    for (int i = 0; i < (int)l2.size(); i++)
+    {
+        cout << l1[i].first + 1 << " " << l1[i].second + 1 << " " << l2[i].first + 1 << " " << l2[i].second + 1 << "\n";
+    }
+}
+```
+
+* Colorful arrays
+```
+/* 
+
+T(N) = O(N * logN), S(N) = O(N)
+
+Idea
+====
+- We will use DSU, to make connected components since all given ranges will act as a connected components
+- The trick is to start from the last queries, because the colors will be the final colors for those ranges
+- We start from the "Left" value of the range and find its parent, then we will check whether the parent is less than the "Right" value of the range or not
+- If it does then we will update the color for that parent index, make connection between Parent and Parent + 1 index
+- Then, We will update our parent index to the parent of parent
+- Another trick which we are using is that while merging we are assigning parent to the max value between the two indices
+
+*/
+const int maxx = 3e5;
+int parent[maxx];
+
+int findParent(int x)
+{
+    if (parent[x] == x)
+        return x;
+
+    return parent[x] = findParent(parent[x]);
+}
+
+void merge(int x, int y)
+{
+    x = findParent(x);
+    y = findParent(y);
+
+    parent[x] = parent[y] = max(x, y);
+}
+
+void init()
+{
+    for (int i = 0; i < maxx; i++)
+        parent[i] = i;
+}
+
+void solve()
+{
+    init();
+
+    int n, m;
+    cin >> n >> m;
+
+    vector<int> finalColors(n + 1);
+    vector<int> lefts(m + 1), rights(m + 1), colors(m + 1);
+    for (int i = 1; i <= m; i++)
+    {
+        cin >> lefts[i] >> rights[i] >> colors[i];
+    }
+
+    for (int i = m; i >= 1; i--)
+    {
+        int parentLeft = findParent(lefts[i]);
+        while (parentLeft <= rights[i])
+        {
+            finalColors[parentLeft] = colors[i];
+            merge(parentLeft, parentLeft + 1);
+            parentLeft = findParent(parentLeft);
+        }
+    }
+
+    for (auto i = finalColors.begin() + 1; i != finalColors.end(); i++)
+        cout << *i << "\n";
+}
+```
+
+### Segment Trees
+
+* Minimum Range Queries
+
+<table>
+  <tr align="center">
+    <td>Tree Look</td>
+    <td>MAX 4N logic</td>
+  </tr>
+  <tr>
+    <td><img src="https://user-images.githubusercontent.com/56304060/138846893-55c3e401-34b9-49ab-9019-64ec5358273f.png" width=500 height=200></td>
+    <td><img src="https://user-images.githubusercontent.com/56304060/138846905-99edfd76-72da-4daa-ae70-98917bda7086.png" width=500 height=200></td>
+  </tr>
+ </table>
+
+
+```
+/*
+
+T(N) = O(Q * logN), S(N) = O(4*N) = O(N), where Q = No of queries
+Idea
+====
+- We will contruct segment tree to answer minimum range query
+- It will have at max 4*N total nodes (mathematically proven)
+- It will have two operation, one is build and another is to answer the query
+- Same logic can be used for answering sum queries and maximum range queries
+
+*/
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+
+void buildSegmentTree(vector<int> &v, vector<int> &segTree, int idx, int low, int high)
+{
+
+    if (low == high)
+    {
+        segTree[idx] = v[low];
+        return;
+    }
+    int mid = (low + high) >> 1;
+    buildSegmentTree(v, segTree, 2 * idx + 1, low, mid);
+    buildSegmentTree(v, segTree, 2 * idx + 2, mid + 1, high);
+
+    // parent storing the minimum of both of its child
+    segTree[idx] = min(segTree[2 * idx + 1], segTree[2 * idx + 2]);
+}
+
+int ansQueries(vector<int> &segTree, int idx, int low, int high, int ql, int qr)
+{
+    // If range query completely lies between current node's range
+    if (low >= ql and high <= qr)
+        return segTree[idx];
+
+    // If the range query doesnot lie between current node's range
+    if (high < ql || low > qr)
+        return INT_MAX;
+
+    // If there is a partial overlap
+    int mid = (low + high) >> 1;
+    int left = ansQueries(segTree, 2 * idx + 1, low, mid, ql, qr);
+    int right = ansQueries(segTree, 2 * idx + 2, mid + 1, high, ql, qr);
+
+    return min(left, right);
+}
+
+void solve()
+{
+    int n, q;
+    cin >> n >> q;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++)
+        cin >> v[i];
+
+    vector<int> segTree(4 * n);
+    buildSegmentTree(v, segTree, 0, 0, n - 1);
+
+    for (int i = 0; i < q; i++)
+    {
+        int ql, qr;
+        cin >> ql >> qr;
+
+        // Answering queries by segement trees
+        ql--;
+        qr--;
+        cout << ansQueries(segTree, 0, 0, n - 1, ql, qr) << "\n";
+    }
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+    solve();
+}
+
+
+```
+
+* Dynamic Range Queries
+
+![image](https://user-images.githubusercontent.com/56304060/138940421-ebd1acae-4b62-47dd-892e-85c27ed160b5.png)
+
+```
+/*
+
+T(N) = O(Q * logN), S(N) = O(N)
+
+Idea
+====
+- Update the value in the array at the given position
+- In the segment will implement an update function that wil update the values of at most logN nodes/array element
+- We will first come to the parent node and we will check whether the current node's range contains the required index number or not
+- If it does we will find the mid value of the range it represents then we will check whether required index lies in the left half or right half
+- Once, we have reached a leaf node then we will update the segment tree idx value with the array's updated value
+- The while returning we will backtrack to the parents value and update its value
+
+*/
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+
+void buildSegTree(vector<ll> &v, vector<ll> &segTree, int idx, int low, int high)
+{
+    if (low == high)
+    {
+        segTree[idx] = v[low];
+        return;
+    }
+
+    ll mid = (low + high) >> 1;
+    buildSegTree(v, segTree, 2 * idx + 1, low, mid);
+    buildSegTree(v, segTree, 2 * idx + 2, mid + 1, high);
+
+    segTree[idx] = min(segTree[2 * idx + 1], segTree[2 * idx + 2]);
+}
+
+void update(vector<ll> &v, vector<ll> &segTree, int idx, int low, int high, int k)
+{
+    if (low == high)
+    {
+        segTree[idx] = v[k];
+        return;
+    }
+
+    ll mid = (low + high) >> 1;
+
+    if (k <= mid)
+        update(v, segTree, 2 * idx + 1, low, mid, k);
+    else
+        update(v, segTree, 2 * idx + 2, mid + 1, high, k);
+
+    segTree[idx] = min(segTree[2 * idx + 1], segTree[2 * idx + 2]);
+}
+
+ll ansQueries(vector<ll> &segTree, int idx, int low, int high, int ql, int qh)
+{
+    // If completely overlapping
+    if (low >= ql and high <= qh)
+        return segTree[idx];
+
+    // If not overlapping at all
+    if (low > qh or high < ql)
+        return INT_MAX;
+
+    // If there is a parital overlap
+    ll mid = (low + high) >> 1;
+    ll left = ansQueries(segTree, 2 * idx + 1, low, mid, ql, qh);
+    ll right = ansQueries(segTree, 2 * idx + 2, mid + 1, high, ql, qh);
+
+    return min(left, right);
+}
+
+void solve()
+{
+
+    ll n, queries;
+    cin >> n >> queries;
+
+    vector<ll> v(n);
+    for (int i = 0; i < n; i++)
+        cin >> v[i];
+    vector<ll> segTree(4 * n);
+    buildSegTree(v, segTree, 0, 0, n - 1);
+
+    while (queries--)
+    {
+        ll k, a, b;
+        cin >> k >> a >> b;
+
+        a--;
+        if (k == 2)
+        {
+            b--;
+            cout << ansQueries(segTree, 0, 0, n - 1, a, b) << "\n";
+        }
+        else
+        {
+            v[a] = b;
+            update(v, segTree, 0, 0, n - 1, a);
+        }
+    }
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+    solve();
+}
+
+```
+
+* Range updates and sums
+	- [Reference](https://cp-algorithms.com/data_structures/segment_tree.html)
+```
+#include<bits/stdc++.h>
+using namespace std;
+
+template<typename... T>
+#define error(args...) { string _s = #args; replace(_s.begin(), _s.end(), ',', ' '); stringstream _ss(_s); istream_iterator<string> _it(_ss); err(_it, args); }
+void err(istream_iterator<string> it) {}
+template<typename T, typename... Args>
+void err(istream_iterator<string> it, T a, Args... args) {cerr << *it << "=" << a << ", "; err(++it, args...);}
+
+#define int long long
+#define pb push_back
+#define F first
+#define S second
+
+const int inf = 1LL<<62;
+const int md = 1000000007;
+
+pair<int,int> seg[1000005];
+int mark[1000005];
+
+void push(int k) {
+    if (mark[k]) {
+        mark[k] = 0;
+        seg[2*k].F = seg[2*k + 1].F = seg[k].F/2;
+        seg[2*k].S = seg[2*k + 1].S = 0;
+        mark[2*k] = mark[2*k + 1] = 1;
+    }   
+}
+
+void update(int v, int a, int b, int k, int x, int y) {
+    if (b < x || a > y) return;
+    if (a<=x && b>=y) {
+        seg[k].S += v;
+        return;
+    }
+    int h = min(b,y) - max(a,x) + 1;
+    push(k); 
+    seg[k].F += h*v;
+    int d = (x+y)/2;
+    update(v, a, b, 2*k, x, d);
+    update(v, a, b, 2*k + 1, d + 1, y);
+}
+int assign(int v, int a, int b, int k, int x, int y) {
+    if (b < x || a > y) return seg[k].F + (y - x + 1)*seg[k].S;
+    if (a <= x && b >= y) {
+        seg[k].F = (y-x+1)*v;
+        seg[k].S = 0;
+        mark[k] = 1; 
+        return seg[k].F;
+    }
+    push(k); 
+    int d = (x+y)/2;
+    seg[2*k].S += seg[k].S,  seg[2*k + 1].S += seg[k].S;
+    seg[k].S = 0;
+    seg[k].F = assign(v, a, b, 2*k, x, d) + assign(v, a, b, 2*k + 1, d + 1, y);
+    return seg[k].F;
+
+}
+int sum(int a, int b, int k, int x, int y) {
+    if (b < x || a > y) return 0;
+    if (a <= x && b >= y) {
+        return seg[k].F + (y-x+1)*seg[k].S;
+    }
+    push(k); 
+    seg[k].F += (y-x+1)*seg[k].S;
+    seg[2*k].S += seg[k].S, seg[2*k + 1].S += seg[k].S;
+    seg[k].S = 0;
+    int d = (x+y)/2;
+    return sum(a, b, 2*k, x, d) + sum(a, b, 2*k + 1, d + 1, y);
+}
+void solve(){
+    int n,q; cin>>n>>q;
+    int nn =n;
+    n = 1<<(int)ceil(log2(n));
+    for (int i = 0; i< nn; i++) {
+        int x; cin>>x;
+        update(x,i,i,1,0,n-1);
+    }
+    while (q--) {
+        int z;
+        cin>>z;
+        if (z == 1) {
+            int a,b,x;
+            cin>>a>>b>>x;
+            a--,b--;
+            update(x,a,b,1,0,n-1);
+        }
+        else if (z == 2) {
+            int a,b,x;
+            cin>>a>>b>>x;
+            a--,b--;
+            assign(x,a,b,1,0,n-1);
+        }
+        else {
+            int a,b;
+            cin>>a>>b; a--, b--;
+            cout<<sum(a,b,1,0,n-1)<<'\n';
+        }
+    }
+}    
+signed main(){
+    ios_base::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+    #ifdef LOCAL
+    freopen("input.txt", "r" , stdin);
+    freopen("output.txt", "w", stdout);
+    #endif
+    int t=1;
+    // cin>>t;
+    for (int i = 1; i <= t; i++) {
+        solve();
+        cout<<'\n';
+    }
+}
+```

@@ -64,7 +64,7 @@ semaphore.
 28. Diff between 2 tier and 3 tier architecture
 29. Diff between TRUNCATE and DELETE command ..
 30. Difference between Intension and Extension in a DataBase
-31. Difference between share lock and exclusive lock, definition of lock
+31. Difference between share lock and exclusive lock, definition of lock [Resource](https://www.javatpoint.com/dbms-lock-based-protocol)
 
 
 ## Network🕸

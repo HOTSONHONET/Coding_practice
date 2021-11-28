@@ -54,7 +54,7 @@ semaphore.
 18. E-R Model ?
 19. Conflict Serializability in DBMS ..[Read from transaction to the Conflict](https://www.javatpoint.com/dbms-conflict-serializable-schedule)
 20. Explain Normal forms in DBMS
-21. What is CCP ? (Concurrency Control Protocols)
+21. What is CCP ? (Concurrency Control Protocols)[Resource](https://www.javatpoint.com/dbms-concurrency-control)
 22. Entity, Entity Type, Entity Set, Weak Entity Set..
 23. What are SQL commands ? Types of them..
 24. Nested Queries in SQL ?

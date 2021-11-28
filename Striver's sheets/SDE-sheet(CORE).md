@@ -50,7 +50,7 @@ semaphore.
 14. What is DML (Data Manipulation Language)
 15. What is normalization ? Types of them ..
 16. What is denormalization ?
-17. What is functional dependency ?
+17. What is functional dependency ? [Resource](https://www.geeksforgeeks.org/types-of-functional-dependencies-in-dbms/)
 18. E-R Model ?
 19. Conflict Serializability in DBMS ..
 20. Explain Normal forms in DBMS

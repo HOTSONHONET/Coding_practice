@@ -56,6 +56,8 @@ semaphore.
 20. Explain Normal forms in DBMS
 21. What is CCP ? (Concurrency Control Protocols)[Read all the problems as well as the protocols(they are small and good)](https://www.javatpoint.com/dbms-concurrency-control)
 22. Entity, Entity Type, Entity Set, Weak Entity Set..
+  - [Entity & Entity Set](https://www.geeksforgeeks.org/difference-between-entity-entity-set-and-entity-type/)
+  - [Weak Entity](https://www.geeksforgeeks.org/weak-entity-set-in-er-diagrams/)
 23. What are SQL commands ? Types of them..
 24. Nested Queries in SQL ?
 25. What is JOIN .. Explain types of JOINs

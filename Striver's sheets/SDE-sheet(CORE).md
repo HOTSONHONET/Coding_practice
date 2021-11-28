@@ -49,7 +49,7 @@ semaphore.
 13. What is DDL (Data Definition Language)
 14. What is DML (Data Manipulation Language)
 15. What is normalization ? Types of them .. [Read upto 5NF](https://www.javatpoint.com/dbms-normalization)
-16. What is denormalization ?
+16. What is denormalization ? [Basically means adding some redundact data to NF tables](https://www.geeksforgeeks.org/denormalization-in-databases/)
 17. What is functional dependency ? [Resource](https://www.geeksforgeeks.org/types-of-functional-dependencies-in-dbms/)
 18. E-R Model ?
 19. Conflict Serializability in DBMS ..

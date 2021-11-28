@@ -52,7 +52,7 @@ semaphore.
 16. What is denormalization ? [Basically means adding some redundact data to NF tables](https://www.geeksforgeeks.org/denormalization-in-databases/)
 17. What is functional dependency ? [Resource](https://www.geeksforgeeks.org/types-of-functional-dependencies-in-dbms/)
 18. E-R Model ?
-19. Conflict Serializability in DBMS ..
+19. Conflict Serializability in DBMS ..[Read from transaction to the Conflict](https://www.javatpoint.com/dbms-conflict-serializable-schedule)
 20. Explain Normal forms in DBMS
 21. What is CCP ? (Concurrency Control Protocols)
 22. Entity, Entity Type, Entity Set, Weak Entity Set..

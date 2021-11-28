@@ -40,6 +40,7 @@ semaphore.
 5. Types of database languages
 6. ACID properties (VVVVV IMP)
 7. Difference between vertical and horizontal scaling
+  [Resource](https://www.geeksforgeeks.org/horizontal-and-vertical-scaling-in-databases/)
 8. What is sharding
 9. Keys in DBMS
 10. Types of relationship

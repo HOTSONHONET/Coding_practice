@@ -45,7 +45,7 @@ semaphore.
 9. Keys in DBMS
 10. Types of relationship
 11. Data abstraction in DBMS, three levels of it
-12. Indexing in DBMS
+12. Indexing in DBMS [Resource](https://www.javatpoint.com/indexing-in-dbms)
 13. What is DDL (Data Definition Language)
 14. What is DML (Data Manipulation Language)
 15. What is normalization ? Types of them .. [Read upto 5NF](https://www.javatpoint.com/dbms-normalization)

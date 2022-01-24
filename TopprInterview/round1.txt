@@ -1,0 +1,6 @@
+Q1 : Find the number that occurs in 1 time in an array, rest occurs in pairs
+Q2 : Give the left view of the tree
+Q3 : Why opting for SDE role instead of ML role ?
+Q4 : ACID Properties 
+Q5 : Process vs Thread
+Q6 : Why CS role instead of BM role ?

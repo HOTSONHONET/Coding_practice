@@ -98,3 +98,49 @@ int main()
 
 
 ```
+
+3. Rest in peace-21-1
+
+```
+/*
+T(N) = O(N)
+S(N) = O(1)
+*/
+
+#include<bits/stdc++.h>
+
+using namespace std;
+
+# define ll long long int
+
+void solve(){
+	int n;
+	cin>>n;
+	string s = to_string(n);
+
+	bool found = false;
+	for(int i = 0; i + 1<s.size(); i++){
+		if(s[i] == '2' && s[i + 1] == '1'){
+			found = true;
+			break;
+		}
+	}
+
+	if((n % 21 == 0) || found){
+		cout<<"The streak is broken!\n";
+	}else{
+		cout<<"The streak lives still in our heart!\n";
+	}
+}
+
+int main(){
+	int tcs = 0;
+	cin>>tcs;
+	for(int tc = 1; tc<=tcs; tc++){
+		solve();
+	}
+
+	return 0;
+}
+
+```

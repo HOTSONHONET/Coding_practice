@@ -144,3 +144,45 @@ int main(){
 }
 
 ```
+
+### Hashing
+
+1. Maximum occurrence
+
+```
+/*
+
+T(N) = O(N)
+S(N) = O(1)
+*/
+
+#include<bits/stdc++.h>
+
+using namespace std;
+
+# define ll long long int
+
+
+int main(){
+	string s;
+	getline(cin, s);
+
+	map<char, int> finder;
+	for(char &c: s){
+		finder[c]++;
+	}
+
+	char char_;
+	int freq = INT_MIN;
+	for(auto [k,v] : finder){
+		if(freq < v){
+			char_ = k;
+			freq = v;
+		}
+	}
+
+	cout<<char_<<" "<<freq<<endl;
+	return 0;
+}
+
+```

@@ -53,3 +53,48 @@ int main()
 }
 
 ```
+
+2. Bear and Segment
+
+```
+
+/*
+T(N) = O(N)
+S(N) = O(1)
+*/
+
+#include<bits/stdc++.h>
+
+using namespace std;
+
+void solve(){
+    string s;
+    cin>>s;
+    
+    int n = s.size(), one_count = 0;
+    for(int i = 0; i<n; ){
+        if(s[i] == '1'){
+            one_count++;
+            while(s[i++] == '1');
+        }else{
+            i++;
+        }
+    }
+    
+    cout<<((one_count == 1) ? "YES" : "NO")<<endl; 
+}
+
+
+int main()
+{
+    int tcs;
+    cin>>tcs;
+    for(int tc = 1; tc<=tcs; tc++){
+        solve();
+    }
+
+    return 0;
+}
+
+
+```

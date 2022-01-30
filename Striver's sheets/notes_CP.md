@@ -186,3 +186,77 @@ int main(){
 }
 
 ```
+
+2. 4C- Registration System
+```
+
+/*
+
+T(N) = O(32 * Nlog(N)) ~ O(NlogN) 
+S(N) = O(N)
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ipair pair<int, int>
+#define llpair pair<long long, long long>
+#define llipair pair<long long int, long long int>
+#define ll long long
+#define lli long long int
+#define ull unsigned long long
+#define MAX 1000000007
+#define ull unsigned long long
+#define INF 0x3f3f3f3f
+
+#ifndef ONLINE_JUDGE
+#include "helper_functions.h"
+#endif
+map<string, int> finder;
+void solve()
+{
+    string s;
+    cin >> s;
+
+    if (finder.find(s) != finder.end())
+    {
+        string newS = s + to_string(finder[s]);
+        finder[s]++;
+        finder.insert({newS, 1});
+
+        cout << newS;
+    }
+    else
+    {
+        finder.insert({s, 1});
+        cout << "OK";
+    }
+
+    cout << "\n";
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+#endif
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    cerr.tie(NULL);
+    int tcs = 0;
+    cin >> tcs;
+    finder.clear();
+    for (int tc = 1; tc <= tcs; tc++)
+    {
+        solve();
+    }
+
+    cerr << "Time elapsed: " << 1.0 * clock() / CLOCKS_PER_SEC << " s.\n";
+    return 0;
+}
+
+```

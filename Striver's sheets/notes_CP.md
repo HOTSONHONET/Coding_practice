@@ -362,3 +362,37 @@ int main()
     return 0;
 }
 ```
+
+### Prefix Sum
+
+1. Cumulative Sum Query
+
+```
+/*
+
+T(N) = O(N)
+S(N) = O(N)
+
+*/
+
+
+void solve()
+{
+    int n, q;
+    cin >> n;
+    vector<int> ps(n + 1, 0);
+    for (int i = 1; i <= n; i++)
+    {
+        cin >> ps[i];
+        ps[i] += ps[i - 1];
+    }
+
+    cin >> q;
+    while (q--)
+    {
+        int l, r;
+        cin >> l >> r;
+        cout << ps[r + 1] - ps[l] << "\n";
+    }
+}
+```

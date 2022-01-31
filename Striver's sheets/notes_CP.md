@@ -442,3 +442,68 @@ int main(){
 }
 
 ```
+
+2. Powers of Two
+
+```
+/*
+T(N) = O(32 * log(N) + k * log(N) + k) ~ O(k * logN)
+S(N) = O(N)
+*/
+
+
+void solve()
+{
+    ll n, k, sum;
+    cin >> n >> k;
+    map<ll, ll> finder;
+    queue<ll> q;
+
+    for (int i = 0; i < 32; i++)
+    {
+        if (n & (1 << i))
+        {
+            if (i > 0)
+                q.push((ll)(1 << i));
+            finder[(ll)(1 << i)]++;
+        }
+    }
+
+    if (finder.size() > k)
+    {
+        cout << "NO\n";
+        return;
+    }
+    int cnt = finder.size();
+    while (cnt < k && !q.empty())
+    {
+        ll top = q.front();
+        q.pop();
+        finder[top]--;
+        finder[top >> 1] += 2;
+        if ((top >> 1) > 1)
+        {
+
+            q.push(top >> 1);
+            q.push(top >> 1);
+        }
+
+        cnt++;
+    }
+
+    if (cnt < k)
+    {
+        cout << "NO\n";
+        return;
+    }
+    cout << "YES\n";
+    for (auto &[k, v] : finder)
+    {
+        for (int i = 0; i < v; i++)
+        {
+            cout << k << " ";
+        }
+    }
+    cout << endl;
+}
+```

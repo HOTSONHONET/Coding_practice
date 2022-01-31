@@ -396,3 +396,49 @@ void solve()
     }
 }
 ```
+
+
+### Bit Manipulation
+
+1. Determining Numbers
+
+```
+/*
+T(N) = O(N)
+S(N) = O(N)
+*/
+
+#include<bits/stdc++.h>
+
+using namespace std;
+
+# define ll long long int
+
+
+int main(){
+	int n;
+	cin>>n;
+	if(n < 2){
+		cout<<-1<<" "<<-1<<endl;
+	}
+	
+	int a = 0, v[n];
+	for(int i = 0; i<n; i++){
+		cin>>v[i];
+		a ^= v[i];
+	}
+
+	// Choosing the MSB
+	int numBits = (int)(log2(a)) + 1;
+	int b = a;
+	for(int i = 0; i<n; i++){
+		if(v[i] & (1<<(numBits - 1)))
+			a ^= v[i];
+	}
+
+	b ^= a;
+	cout<<min(a, b)<<" "<<max(a, b)<<endl;
+	return 0;
+}
+
+```

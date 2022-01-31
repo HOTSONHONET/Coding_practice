@@ -507,3 +507,26 @@ void solve()
     cout << endl;
 }
 ```
+
+3. You are given two binary strings
+
+```
+/*
+
+T(N) = O(N)
+S(N) = O(1)
+
+*/
+
+void solve()
+{
+    string x, y;
+    cin >> x >> y;
+
+    reverse(x.begin(), x.end());
+    reverse(y.begin(), y.end());
+    int idx_y = y.find('1');
+    int idx_x = x.find('1', idx_y);
+    cout << (idx_x - idx_y) << "\n";
+}
+```

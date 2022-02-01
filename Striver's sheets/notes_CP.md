@@ -581,3 +581,41 @@ void solve()
 }
 
 ```
+5. New Year and Old property
+
+```
+/*
+T(N) = O(MaxBits * MaxBits * MaxBits) where, MaxBits = log(max(l, r))
+S(N) = O(MaxBits) <- For string creation
+
+*/
+
+
+void solve()
+{
+    ll l, r;
+    cin >> l >> r;
+    ll numBitsL = 1 + int(log2(l)), numBitsR = 1 + int(log2(r));
+    int ans = 0;
+    while (numBitsL <= numBitsR)
+    {
+        string s = "";
+        for (int i = 0; i < numBitsL; i++)
+        {
+            s += '1';
+        }
+        for (int i = numBitsL - 1; i > 0; i--)
+        {
+            s[i] = '0';
+            ll val = (ll)stoll(s, nullptr, 2);
+            if ((val >= l) && (val <= r))
+            {
+                ans++;
+            }
+            s[i] = '1';
+        }
+        numBitsL++;
+    }
+    cout << ans << "\n";
+}
+```

@@ -530,3 +530,54 @@ void solve()
     cout << (idx_x - idx_y) << "\n";
 }
 ```
+
+4. Neko Performs Cat Furrier Transform
+
+```
+/*
+T(N) = O(N) + O(logN)
+S(N) = O(1)
+*/
+
+
+void solve()
+{
+    int n;
+    cin >> n;
+    if (((n + 1) & n) == 0)
+    {
+
+        cout << 0 << endl;
+        return;
+    }
+    int odd = 1, moves = 0;
+    vector<int> v;
+    while (((n + 1) & n))
+    {
+        if (odd)
+        {
+            odd = 0;
+            int numBits = 1 + int(log2(n));
+            while (n & (1 << numBits))
+            {
+                numBits--;
+            }
+            n ^= ((1 << numBits) - 1);
+            v.push_back(numBits);
+        }
+        else
+        {
+            odd = 1, n++;
+        }
+        moves++;
+    }
+
+    cout << moves << "\n";
+    for (int &i : v)
+    {
+        cout << i << " ";
+    }
+    cout << "\n";
+}
+
+```

@@ -1,0 +1,16 @@
+{'Anna': {'C++': 2}, 'Bob': {'CSS': 5, 'HTML': 5}, 'Maria': {'Python': 3}}
+{'Logging': {'best_before': 5,
+             'days': 5,
+             'numRoles': 1,
+             'roles': {'C++': 3},
+             'score': 10},
+ 'WebChat': {'best_before': 20,
+             'days': 10,
+             'numRoles': 2,
+             'roles': {'HTML': 3, 'Python': 3},
+             'score': 20},
+ 'WebServer': {'best_before': 7,
+               'days': 7,
+               'numRoles': 2,
+               'roles': {'C++': 2, 'HTML': 3},
+               'score': 10}}
